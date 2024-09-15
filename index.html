@@ -8,42 +8,93 @@
 	<style>
 		body {
 			color: White;
-			background-color: DimGrey;
+			background-color: #26292B;
 			min-height: 100vh;
-			width: 100%;}
-
-		#main_grid {
-			display: grid;
-			grid-template-columns: 50% 50%;
-			grid-template-rows: auto auto;
-			grid-template-areas:
-				"box1 box2"
-				"box3 box4";}
-		#box1 {
-			grid-area: box1;
-			vertical-align: middle;
-			text-align: center;}		
+			width: 100%;}	
 		
 		#intro {
-			width: 100%;}
+			background-color: #5F7ADB;
+			width: 90%;}
 
 		#main_flex {
 			display: flex;
 			flex-direction: row;
-			width: 100%;}
+			width: 90%;}
 
 		#flex_div1 {
-			width: 50%;
-			text-align: center;}
+			width: 45%;
+			text-align: left;
+			padding: 2%;}
 
 		#flex_div2 {
-			width: 50%;
-			text-align: center;}
+			width: 45%;
+			display: flex
+			flex-direction: row;
+			justify-content: center;
+			padding: 2%;}
+			
+		#flex_div2{
+			background-color: #2E3239;
+			border-radius: 25px;
+			border: 5px solid #5F7ADB;}
+		
+		#projects {
+			background-color: #2E3239;
+			border-radius: 25px;
+			border: 5px solid #5F7ADB;
+			padding: 5%;}
+			
+		#main_title {
+			border-radius: 25px;
+			display: flex;
+			flex-direction: row;
+			text-align: left;
+			margin: 0% 5% 2% 5%;
+			background-color: #5F7ADB;
+			width: 90%;}
+		
+		#menu_holder{
+			display: flex;
+			flex-direction: row;}
+			
+		.menu_box {
+			border-radius: 25px;
+			margin: 0% 2% 0% 2%;
+			text-align: center;
+			background-color: #DFFF00;
+			width: 30%;}
+		
+		a:link {
+			color: #33ff96;}	
+		a:visited {
+			color: #DFFF00;}
+		a:hover {
+			color: #33ff96;
+			transition: 2s ease;
+			transform: scale(1.15);}
 			
 		input::-webkit-outer-spin-button,
 		input::-webkit-inner-spin-button {
   		-webkit-appearance: none;
   		margin: 0;}
+		
+		.loop {
+			--time: 7s;
+			display: grid;}
+
+		@media (prefers-reduced-motion: no-preference) {
+			.loop img {   
+				grid-area: 1/1;
+				animation: rotate calc(var(--time) * 3) linear 0s infinite;}
+   
+			.loop img:nth-child(2) { animation-delay: calc(var(--time) * -2); }
+			.loop img:nth-child(3) { animation-delay: calc(var(--time) * -1); }}
+
+		@keyframes rotate {
+			/* 33.33% is (100% / number of images) */
+			0%, 33.33% { opacity: 1; }
+			/* 33.34% is (100% / number of images) + 0.01 */
+			33.34%, 100% { opacity: 0; }}
 
 		input[type=number] {
 			text-align: center; 
@@ -55,12 +106,46 @@
 </head>
 
 <body>
-	<h1 style="width: 100%;" >Mauricio Cafiero Research</h1>
-
+	
+		
+		<div id="main_title"> <img  style="padding: 2% 1% 1% 5%;" src="images/comp_chem_2_small.jpg" alt="Computer"> 
+		<h1 style="padding: 50px;">Mauricio Cafiero Computational Chemistry Research</h1>
+		</div>
+	
+	<div id="menu_holder">
+		<a class="menu_box" href="dr_cafiero.html" style="color: #00008B;">Dr. Cafiero</a>
+		<a class="menu_box" href="members.html" style="color: #00008B;">Group members</a>
+		<a class="menu_box" href="Chem_webapps_frontpage.html" style="color: #00008B;">Chemistry Web Apps</a>
+	</div>
+	<br>
 	<section id = "main_flex">
 		<div id = "flex_div1">
+			<ul id="projects"> <h1>Current Projects</h1>
+				<li>Designing generative, pre-trained (GPT) models to create virtual screening libraries for drug design. 
+					We have created transformer-based GPTs for creating libraries of molecules to inhibit HMG coenzyme A reductase
+					(anti-cholesterol drugs), and are currently working on RNN and transformer-based GPTs for inhibiting the MAOB
+					enzyme for possible action against Parkinon's Disease. A manuscript for this is currently under review.</li>
+				<li>We recently published a paper on <a href="https://doi.org/10.1021/acs.jpcb.3c07456">three-body interactions in 
+					protein-ligand binding</a> (where the three bodies are the ligand and two amino-acid residues) and have a manuscript 
+					under review which examines general three-body systems important to drug design and evaluates many families of DFT 
+					methods for their accuracy.</li>
+				<li>Much of our work is in DFT-studies of protein-ligand binding, usually in the area of drug-design for  Parkinson's Disease.
+					<a href="https://doi.org/10.1021/acsomega.3c03888">This</a> recent work describes how paracetamol may have some action in
+					the relief of symptoms of Parkinson's Disease. 
+				<li>We are developing a set of <a href="Chem_webapps_frontpage.html">Javascript-based web-apps </a> for teaching chemistry, 
+					including a introduction to machine-learning 
+					neural networks, where the user can train their own neural network to fit a potential energy surface. We also have apps for
+					visualizing liquid/solid surface interactions, predicting rovibrational spectra, drawing molecules and predicting their ADME
+					properties for drug design, and performing calculations for various chemistry practicals.
+			</ul>
 		</div>
-		<div id = "flex_div2">
+		<div id = "flex_div2" class="loop">
+			
+			<img src="images/docking_pic1.jpg" style="padding: 5%;" fetchpriority="high"/>
+			<img src="images/GPT_pic.jpg"style="padding: 5%;" />
+			<img src="images/docking_pic2.jpg" style="padding: 5%;"/>
+			<img src="images/active_site_pic.jpg" style="padding: 5%;"/>
+			
 		</div>
 	</section>
 	<p>This is the work of Dr. Mauricio Cafiero and may be used widely though attribution is appreciated.</p>
