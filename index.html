@@ -10,7 +10,8 @@
 			color: White;
 			background-color: #26292B;
 			min-height: 100vh;
-			width: 100%;}	
+			width: 100%;
+			font-size: 100%}	
 		
 		#intro {
 			background-color: #5F7ADB;
@@ -19,6 +20,7 @@
 		#main_flex {
 			display: flex;
 			flex-direction: row;
+			justify-content: space-around;
 			width: 90%;}
 
 		#flex_div1 {
@@ -27,7 +29,7 @@
 			padding: 2%;}
 
 		#flex_div2 {
-			width: 45%;
+			max-width: 45%;
 			display: flex
 			flex-direction: row;
 			justify-content: center;
@@ -78,6 +80,9 @@
   		-webkit-appearance: none;
   		margin: 0;}
 		
+		.rot_pics {
+			padding: 5% 5% 5% 0%;}
+		
 		.loop {
 			--time: 7s;
 			display: grid;}
@@ -85,16 +90,17 @@
 		@media (prefers-reduced-motion: no-preference) {
 			.loop img {   
 				grid-area: 1/1;
-				animation: rotate calc(var(--time) * 3) linear 0s infinite;}
+				animation: rotate calc(var(--time) * 4) linear 0s infinite;}
    
-			.loop img:nth-child(2) { animation-delay: calc(var(--time) * -2); }
-			.loop img:nth-child(3) { animation-delay: calc(var(--time) * -1); }}
+			.loop img:nth-child(2) { animation-delay: calc(var(--time) * -3); }
+			.loop img:nth-child(3) { animation-delay: calc(var(--time) * -2); }
+			.loop img:nth-child(4) { animation-delay: calc(var(--time) * -1); }}
 
 		@keyframes rotate {
-			/* 33.33% is (100% / number of images) */
-			0%, 33.33% { opacity: 1; }
-			/* 33.34% is (100% / number of images) + 0.01 */
-			33.34%, 100% { opacity: 0; }}
+			/* 25.00% is (100% / number of images) */
+			0%, 25.00% { opacity: 1; }
+			/* 25.01% is (100% / number of images) + 0.01 */
+			25.01%, 100% { opacity: 0; }}
 
 		input[type=number] {
 			text-align: center; 
@@ -141,10 +147,10 @@
 		</div>
 		<div id = "flex_div2" class="loop">
 			
-			<img src="images/docking_pic1.jpg" style="padding: 5%;" fetchpriority="high"/>
-			<img src="images/GPT_pic.jpg"style="padding: 5%;" />
-			<img src="images/docking_pic2.jpg" style="padding: 5%;"/>
-			<img src="images/active_site_pic.jpg" style="padding: 5%;"/>
+			<img src="images/docking_pic1.jpg" class="rot_pics" />
+			<img src="images/GPT_pic.jpg" class="rot_pics" />
+			<img src="images/docking_pic2.jpg" class="rot_pics"/>
+			<img src="images/active_site_pic.jpg" class="rot_pics" fetchpriority="high"/>
 			
 		</div>
 	</section>
