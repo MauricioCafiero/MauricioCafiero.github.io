@@ -354,7 +354,7 @@ make_plot(x_arr,y_arr,"plot_holder1")
 	var bottom_curve = Math.min(...y_arr);
 	var top_curve = Math.max(...y_arr);
 	var barrier_energy = 627.5095*(top_curve - bottom_curve);
-	barrier_energy = Math.round(barrier_energy*1000)/1000;
+	barrier_energy = Math.round(barrier_energy*100)/100;
 	barrier_energy = (barrier_energy/100);
 	console.log(bottom_curve,top_curve);
 	output.insertAdjacentHTML("beforeEnd",`wB97XD Predicted barrier height: ${barrier_energy} kcal/mol. <br>`);
@@ -436,12 +436,14 @@ function clear_training() {
 	make_plot(x_arr,y_arr,"plot_holder1")
 	
 	{
-	let output = document.getElementById("answer_holder");
-	let bottom_curve = Math.min(...y_arr);
-	let end_curve = y_arr[y_arr.length-1];
-	let binding_energy = 627.5095*(bottom_curve - end_curve);
-	binding_energy = Math.round(binding_energy*1000)/1000;
-	output.insertAdjacentHTML("beforeEnd",`wB97XD Predicted binding energy: ${binding_energy} kcal/mol. <br>`);
+	var output = document.getElementById("answer_holder");
+	var bottom_curve = Math.min(...y_arr);
+	var top_curve = Math.max(...y_arr);
+	var barrier_energy = 627.5095*(top_curve - bottom_curve);
+	barrier_energy = Math.round(barrier_energy*100)/100;
+	barrier_energy = (barrier_energy/100);
+	console.log(bottom_curve,top_curve);
+	output.insertAdjacentHTML("beforeEnd",`wB97XD Predicted barrier height: ${barrier_energy} kcal/mol. <br>`);
 }
 }
 
