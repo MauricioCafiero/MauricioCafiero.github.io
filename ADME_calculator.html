@@ -177,9 +177,14 @@
 	</section>
 	<hr>
 	<div id="new_mol_holder">
-		<label for="new_mol_smiles">SMILES for edited molecule:</label>
-		<input id="new_mol_smiles" type="text" style="width: 30%">
-		<button id="get_new_mol_b" onclick="get_new_mol()" style="width: 30%">
+		<label for="user_mol_smiles" style="margin: 0% 3%;">SMILES for user molecule:</label>
+		<input id="user_mol_smiles" type="text" style="width: 20%">
+		<button id="get_user_mol_b" onclick="get_user_mol()" style="width: 20%">
+			Choose user molecule for properties.</button>
+		<br>
+		<label for="new_mol_smiles" style="margin: 0% 3%;">SMILES for edited molecule:</label>
+		<input id="new_mol_smiles" type="text" style="width: 20%">
+		<button id="get_new_mol_b" onclick="get_new_mol()" style="width: 20%">
 			Choose new molecule for properties.</button> 
 	</div>
 	<hr>
@@ -197,6 +202,7 @@
 // hiding anf unhiding the description text
 
 var use_edited = false;
+var use_user = false;
 
 document.getElementById("mol_options").addEventListener("blur",function(){use_edited=false;});
 document.getElementById("fakelink").addEventListener("click",unhide_sample);
@@ -226,6 +232,9 @@ function display_molecule() {
 
 	if (use_edited){
 		var smiles_in = document.getElementById("new_mol_smiles").value;
+		var display_name = smiles_in;}
+	else if (use_user) {
+		var smiles_in = document.getElementById("user_mol_smiles").value;
 		var display_name = smiles_in;}
 	else {
 		var molecule_selector = document.getElementById("mol_options");
@@ -323,6 +332,13 @@ function get_new_mol(){
 //ust toggles between using a selected molecule or using an edited molecule. ==============================================
 
 	use_edited = true;	
+}
+
+function get_user_mol(){
+
+//ust toggles between using a selected molecule or using an edited molecule. ==============================================
+
+	use_user = true;	
 }
 
 </script>	
