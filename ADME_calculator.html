@@ -116,20 +116,17 @@
 
 	<div id="intro">
 		<ul>
-			<li>Choose an initial molecule from the selection tool on the left.</li>
-			<li>Press the button to show the structure and some ADME properties
-				of the selected molecule.</li>
-			<li>Press "edit the molecule;" this opens a drawing window
-				which allows you to make modifications to the molecule.</li>
-			<li>Press "choose new molecule for properties" button
-				to select the molecule you have drawn instead of a molecule from 
-				the drop down list. </li>
-			<li>Press the button again to show the structure and ADME 
-				properties of the new molecule.</li>
-			<li> Press the "choose random molecule" to get a random flavanoid molecule. You can then
-				display or edit this molecule.</li>
-			<li>Use the copy button to copy any of the molecule smiles string to the clipboard.</li>
-			<li id="fakelink">Press here ADME properties guidelines.
+			<li>Choose an initial molecule from the selection tool on the left, and <em>then</em> press the "display molecule and properties" 
+				button to show the structure and some ADME properties of the selected molecule, or</li>
+			<li>Enter your own SMILES string below and press "choose user molecule for properties," or</li>
+			<li>Press the "choose random molecule" to get a random flavanoid molecule.</li>
+			<li>If you would like to make modifications to the chosen molecule, press "edit the molecule" button. This opens a drawing window
+				which allows you to edit the molecule.</li>
+			<li>Press "choose edited molecule for properties" button to select the molecule you have drawn for analysis. </li>
+			<li>Press the "display molecule and properties" button again to show the structure and ADME properties of the edited molecule.</li>
+			
+			<li>Use the copy button to copy any of the molecule smiles strings to the clipboard.</li>
+			<li id="fakelink">Press here to show/hide ADME properties guidelines.
 				<ul id="sample_values">
 					<li>c log P: under 5 by Lipinski's rules; 
 					between -0.4 and 5.6 by the Ghose filter; under 3 by the rule of 3 for 
@@ -148,7 +145,6 @@
 					by the Ghose filter. </li>
 					
 				</ul></li>
-			<li id = "hide_sample_point">Press here to hide.</li>
 		</ul>
 	</div>
 
@@ -220,17 +216,25 @@
 
 var use_edited = false;
 var use_user = false;
+var use_rand = false;
 
-document.getElementById("mol_options").addEventListener("blur",function(){use_edited=false;});
-document.getElementById("fakelink").addEventListener("click",unhide_sample);
-document.getElementById("hide_sample_point").addEventListener("click",hide_sample);
+document.getElementById("mol_options").addEventListener("blur",function(){
+	use_edited=false;
+	use_user = false;
+	use_rand = false;});
+document.getElementById("fakelink").addEventListener("click",toggle_sample);
 
-function unhide_sample() {
+function toggle_sample() {
 
 //unhides description text ================================================================================================
 
-	document.getElementById("sample_values").style.display="block";
-	document.getElementById("hide_sample_point").style.display="block";}
+	var sample_values = document.getElementById("sample_values");
+	
+	if (sample_values.style.display == "block") {
+		sample_values.style.display = "none";}
+	else {
+		sample_values.style.display = "block";}
+}
 
 function hide_sample() {
 
@@ -352,6 +356,10 @@ function get_new_mol(){
 //ust toggles between using a selected molecule or using an edited molecule. ==============================================
 
 	use_edited = true;	
+	use_user = false;
+	use_rand = false;
+	
+	display_molecule()
 }
 
 function get_user_mol(){
@@ -359,6 +367,11 @@ function get_user_mol(){
 //ust toggles between using a selected molecule or using an edited molecule. ==============================================
 
 	use_user = true;	
+	use_edited = false;
+	use_rand = false;
+	console.log("Using user mol")
+	
+	display_molecule()
 }
 
 function* get_flav() {
@@ -379,6 +392,10 @@ function get_rand_mol() {
 	rand_mol_input.value = rand_smiles;
 	
 	use_rand = true;	
+	use_user = false;
+	use_edited = false;
+	
+	display_molecule()
 }
 
 function copy_smiles(which_smiles) {
