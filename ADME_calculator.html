@@ -224,6 +224,8 @@ document.getElementById("mol_options").addEventListener("blur",function(){
 	use_rand = false;});
 document.getElementById("fakelink").addEventListener("click",toggle_sample);
 
+var new_flav = get_flav();
+
 function toggle_sample() {
 
 //unhides description text ================================================================================================
@@ -380,15 +382,15 @@ function* get_flav() {
 	for (let i = 0; i < original_length; i++){
 		var rn = Math.random()*original_length;
 		rn = Math.floor(rn);
-		new_flav = flavs[rn];
-		yield new_flav;
+		next_flav = flavs[rn];
+		yield next_flav;
 	}
 }
 
 function get_rand_mol() {
 	rand_mol_input = document.getElementById("rand_mol_smiles");
-	let new_flav = get_flav();
-	rand_smiles = new_flav.next().value;
+	
+	var rand_smiles = new_flav.next().value;
 	rand_mol_input.value = rand_smiles;
 	
 	use_rand = true;	
