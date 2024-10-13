@@ -164,9 +164,9 @@
 			
 			<label id="drop_box">
 				<div id="drop_div" style="margin: auto;"> Drag and drop your image of (maybe) a beaker here! </div>
-				or use this to find your file and upload:
+				or use this to find your file and upload, or to use your mobile camera:
 				<input type="file" id="image_input" accept="image/*"> <br>
-				or use this to capture an image with your device camera: <br>
+				or use this to capture an image with your device camera (desktop): <br>
 				<button id="capture_image_b" onclick="capture_image()">Capture image from camera.</button>
 			</label>
 			<br>
@@ -289,9 +289,6 @@ function parse_predictions(predictions) {
 
 function capture_image() {
 	const capture_div = document.getElementById("capture_div");
-	const canvas_img = document.getElementById("canvas_img");
-	const photo = document.getElementById("placeholder");
-	const preview = document.getElementById("preview");
 
 	capture_div.style.display = "Block";
 	start_camera();
