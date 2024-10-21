@@ -313,6 +313,7 @@ function read_csv() {
 
 	var file_holder = document.getElementById("choose_file");
 	var reader = new FileReader();
+	new_smiles = get_smiles(); 
 
 	var [file] = file_holder.files;
 
@@ -439,8 +440,7 @@ function find_replace() {
 //reset substituted list and text each time
 
 	sub_smiles.length = 0
-	new_and_old.length = 0
-	new_and_old = [...smiles_array];
+	new_and_old = Array.from(smiles_array);
 	
 	const output_holder = document.getElementById("subs_div");
 	output_holder.innerHTML = "";
