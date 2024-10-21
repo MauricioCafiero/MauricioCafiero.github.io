@@ -68,8 +68,8 @@
 			background-color: white;
 			width: 75%}
 		
-		#csv_section {
-			width: 100%;}
+		#csv_section, #no_csv_section {
+			width: 30%;}
 		
 		#table_section {
 			display: none;}
@@ -231,9 +231,12 @@
 		</div>
 	</section>
 	<hr>
-	<div id="table_section"> Smiles list for substituted molecules. 
+	<div id="table_section"> Smiles list for substituted molecules, and for original list with substituted molecules when applicable. 
 		<button id='copy_b' onclick='copy_smiles_list()'>Copy list to clipboard.</button> <br>
 		<textarea id="csv_section" readonly rows = "0">
+		</textarea>
+		<button id='copy_no_b' onclick='copy_no_smiles_list()'>Copy list to clipboard.</button> <br>
+		<textarea id="no_csv_section" readonly rows = "0">
 		</textarea>
 	</div>
 	<p>This is the work of Dr. Mauricio Cafiero and may be used widely though attribution is appreciated.</p>
@@ -248,6 +251,7 @@ var number_columns, number_points;
 var column_titles = new Array;
 var smiles_array = new Array;
 var sub_smiles = new Array;
+var new_and_old = new Array;
 var current_prop_name = new String();
 var sub_point_one
 
@@ -321,7 +325,7 @@ function parse_csv(file_content){
 	number_points = rows.length - 1;
 	
 //allow for different separators and different spellings of smiles. if using ";", then assumes a ChEMBL file and
-//removex extra quote marks
+//removes extra quote marks
 
 	if (rows[0].includes(";")) {
 		split_char = ";"
@@ -417,6 +421,8 @@ function find_replace() {
 //reset substituted list and text each time
 
 	sub_smiles.length = 0
+	new_and_old.length = 0
+	new_and_old = [...smiles_array];
 	
 	const output_holder = document.getElementById("subs_div");
 	output_holder.innerHTML = "";
@@ -442,15 +448,17 @@ function find_replace() {
 //first search for a phenyl ring, the search for the general sub point, and finally replace the specific sub point with the new fragment
 
 	for (let i = 0; i < smiles_array.length; i++) {
+		
 		re_exists = smiles_array[i].match(/c[1-9]c(\([A-Z]+\))?c(\([A-Z]+\))?c(\([A-Z]+\))?c(\([A-Z]+\))?c[1-9]/);
 
 		if (re_exists != null && re_exists.length != 0) {
 			if (re_exists[0].includes(sub_point_one)) {	
 				new_mol = smiles_array[i].replace(sub_locations_re[sub_point_two], n => n.replace(sub_point_one,new_fragments[sub_point_three]));
-			
+				
 				if (new_mol != smiles_array[i]) {
 					console.log("found a match!");
-					sub_smiles.push(new_mol);}
+					sub_smiles.push(new_mol);
+					new_and_old[i] = new_mol;}
 			}}
 		else {
 			console.log("no match!");}}
@@ -472,12 +480,19 @@ function find_replace() {
 		
 		const table_section = document.getElementById("table_section");
 		const csv_out = document.getElementById("csv_section");
+		const no_csv_out = document.getElementById("no_csv_section");
 		
 		table_section.style.display = "Block";
+		
 		csv_out.innerHTML = "Smiles\n";
 		sub_smiles.forEach( smile => {
 			csv_out.insertAdjacentHTML("beforeend",`${smile}\n`);});
 		csv_out.setAttribute("rows","10");
+		
+		no_csv_out.innerHTML = "Smiles\n";
+		new_and_old.forEach( smile => {
+			no_csv_out.insertAdjacentHTML("beforeend",`${smile}\n`);});
+		no_csv_out.setAttribute("rows","10");
 			
 		const canvases = document.getElementById("canvas_div");
 		canvases.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
@@ -523,6 +538,18 @@ function copy_smiles_list() {
 //copy the smiles list to the clipboard
 
 	var copyText = document.getElementById("csv_section");
+
+	copyText.select();
+	copyText.setSelectionRange(0, 99999);
+
+	navigator.clipboard.writeText(copyText.value);
+}
+
+function copy_no_smiles_list() {
+
+//copy the smiles list to the clipboard
+
+	var copyText = document.getElementById("no_csv_section");
 
 	copyText.select();
 	copyText.setSelectionRange(0, 99999);
