@@ -69,10 +69,22 @@
 			width: 75%}
 		
 		#csv_section, #no_csv_section {
-			width: 30%;}
+			width: 100%;}
 		
 		#table_section {
-			display: none;}
+			display: none;
+			flex-direction: rows;
+			flex-wrap: wrap;
+			justify-content: space-around;}
+		
+		.csv_boxes {
+			width: 40%;}
+		
+		.button_box {
+			width: 100%;
+			display: flex;
+			flex-direction: rows;
+			justify-content: space-around;}}
 
 		#mol_display_name {
 			margin: auto;}
@@ -232,12 +244,18 @@
 	</section>
 	<hr>
 	<div id="table_section"> Smiles list for substituted molecules, and for original list with substituted molecules when applicable. 
-		<button id='copy_b' onclick='copy_smiles_list()'>Copy list to clipboard.</button> <br>
-		<textarea id="csv_section" readonly rows = "0">
-		</textarea>
-		<button id='copy_no_b' onclick='copy_no_smiles_list()'>Copy list to clipboard.</button> <br>
-		<textarea id="no_csv_section" readonly rows = "0">
-		</textarea>
+		<div class="button_box">
+			<button id='copy_b' onclick='copy_smiles_list()'>Copy new list to clipboard.</button>
+			<button id='copy_no_b' onclick='copy_no_smiles_list()'>Copy total list to clipboard.</button>
+		</div>
+		<div class="csv_boxes">
+			
+			<textarea id="csv_section" readonly rows = "0"></textarea>
+		</div>
+		<div class="csv_boxes">
+			
+			<textarea id="no_csv_section" readonly rows = "0"></textarea>
+		</div>
 	</div>
 	<p>This is the work of Dr. Mauricio Cafiero and may be used widely though attribution is appreciated.</p>
 
@@ -482,7 +500,7 @@ function find_replace() {
 		const csv_out = document.getElementById("csv_section");
 		const no_csv_out = document.getElementById("no_csv_section");
 		
-		table_section.style.display = "Block";
+		table_section.style.display = "Flex";
 		
 		csv_out.innerHTML = "Smiles\n";
 		sub_smiles.forEach( smile => {
