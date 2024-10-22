@@ -205,6 +205,14 @@
 				<input type="radio" id="Chloro" name="new_frag" value="5">
 				<label for="Chloro">Chloro </label>
 				</div>
+				<div>
+				<input type="radio" id="Ammonium" name="new_frag" value="6">
+				<label for="Ammonium">Ammonium/Charged amino </label>
+				</div>
+				<div>
+				<input type="radio" id="Methyl" name="new_frag" value="7">
+				<label for="Methyl">Methyl </label>
+				</div>
 			</div>
 		</div>
 		<hr>
@@ -461,7 +469,7 @@ function find_replace() {
 					/c[1-9]ccccc[1-9](\([A-Z]+\))?/,      //carbon 6 of ring *cant do this!
 					/cc/g];								//more than one unsubstituted carbon
 	
-	new_fragments = ["c(F)c","c(C#N)c","c(I)c","c([N+]([O-])=O)c","c(OC)c","c(Cl)c"];
+	new_fragments = ["c(F)c","c(C#N)c","c(I)c","c([N+]([O-])=O)c","c(OC)c","c(Cl)c","c([NH3+])c","c(C)c"];
 
 //first search for a phenyl ring, the search for the general sub point, and finally replace the specific sub point with the new fragment
 
