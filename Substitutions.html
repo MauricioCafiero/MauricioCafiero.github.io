@@ -80,6 +80,10 @@
 		.csv_boxes {
 			width: 40%;}
 		
+		#export_csv {
+			color: #DFFF00;
+			cursor: grab;}
+		
 		.button_box {
 			width: 100%;
 			display: flex;
@@ -252,6 +256,7 @@
 	</section>
 	<hr>
 	<div id="table_section"> Smiles list for substituted molecules, and for original list with substituted molecules when applicable. 
+		<a id='export_csv' download='substituted_molecules.csv'>Export substituted molecules.</a>
 		<div class="button_box">
 			<button id='copy_b' onclick='copy_smiles_list()'>Copy new list to clipboard.</button>
 			<button id='copy_no_b' onclick='copy_no_smiles_list()'>Copy total list to clipboard.</button>
@@ -278,6 +283,7 @@ var column_titles = new Array;
 var smiles_array = new Array;
 var sub_smiles = new Array;
 var new_and_old = new Array;
+var sub_name_array = new Array();
 var current_prop_name = new String();
 var sub_point_one
 
@@ -287,6 +293,9 @@ new_smiles = get_smiles();
 
 document.getElementById("choose_file").addEventListener('change', () => {
 	read_csv();});
+
+document.getElementById("export_csv").addEventListener('click', () => {
+	download_csv();});
 
 function get_sub_values() {
 
@@ -493,6 +502,7 @@ function find_replace() {
 //write all the substituted molecules to a textarea for copy/pasting.
 
 	if (sub_smiles.length != 0) {
+		
 		console.log(`made ${sub_smiles.length} substitutions`);
 		new_subbed_smiles = get_subbed_smiles(); 
 		smiles_out = new_subbed_smiles.next().value;
@@ -515,8 +525,9 @@ function find_replace() {
 			csv_out.insertAdjacentHTML("beforeend",`${smile}\n`);});
 		csv_out.setAttribute("rows","10");
 		
+		
 		no_csv_out.innerHTML = "Smiles\n";
-		new_and_old.forEach( smile => {
+		new_and_old.forEach( function(smile,i) {
 			no_csv_out.insertAdjacentHTML("beforeend",`${smile}\n`);});
 		no_csv_out.setAttribute("rows","10");
 			
@@ -581,6 +592,22 @@ function copy_no_smiles_list() {
 	copyText.setSelectionRange(0, 99999);
 
 	navigator.clipboard.writeText(copyText.value);
+}
+
+
+async function download_csv() {
+	const export_link = document.getElementById("export_csv");
+	const no_csv_out = document.getElementById("no_csv_section");
+	
+	const current_url = export_link.href;
+	if (current_url) {
+		URL.revokeObjectURL(current_url);}
+	
+	console.log(no_csv_out.innerHTML);
+	const blob = new Blob([no_csv_out.innerHTML], {type: 'text/plain'});
+	const url = URL.createObjectURL(blob);
+	export_link.href = url
+	
 }
 
 </script>
