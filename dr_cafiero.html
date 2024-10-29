@@ -69,7 +69,7 @@
 	</div>
 	
 	<div id="menu_holder">
-		<<a class="menu_box" href="dr_cafiero.html" style="color: #00008B;">Dr. Cafiero</a>
+		<a class="menu_box" href="dr_cafiero.html" style="color: #00008B;">Dr. Cafiero</a>
 		<a class="menu_box" href="members.html" style="color: #00008B;">Group members</a>
 		<a class="menu_box" href="Chem_webapps_frontpage.html" style="color: #00008B;">Chemistry Web Apps</a>
 		<a class="menu_box" href="index.html" style="color: #00008B;">Back to Home</a>
@@ -82,6 +82,7 @@
 		</div>
 		<div id="bio_flex">	
 			<h1>Lecturer in Physical Chemistry at the University of Reading.</h1>
+			<h5>Double click in this section to hear the content. Click to pause. Right click to cancel.</h5>
 			I earned my PhD at the University of Arizona where I wrote code to calculate non-Born-Oppenheimer, explicitly correlated
 			wavefunctions for many-particle systems in the presence of electric fields. After that I worked as a post-doc at the
 			National Institute of Standards and Technology developing novel DFT methods. In my 16 years at Rhodes College in Memphis, TN, 
@@ -100,5 +101,64 @@
 	<p>This is the work of Dr. Mauricio Cafiero and may be used widely though atribution is appreciated.</p>
 
 </body>
+
+<script>
+
+var use_voice;
+
+document.getElementById("bio_flex").addEventListener('dblclick', () => {
+	speak();});
+
+document.getElementById("bio_flex").addEventListener('click', () => {
+	toggle_voice();});
+	
+document.getElementById("bio_flex").addEventListener('contextmenu', () => {
+	stop_voice();});
+
+speechSynthesis.addEventListener('voiceschanged', () => get_voice());
+
+
+function get_voice() {
+
+			console.log("hello");
+			var vlist = speechSynthesis.getVoices()
+		
+			if (vlist.length != 0) {
+				vlist.forEach(voice => {
+					match_try = voice.name
+					match = match_try.search("Hazel");
+					if (match != -1) {
+						use_voice = voice};});
+				};
+}
+
+function speak() {
+		get_voice();
+		
+		const content = document.getElementById("bio_flex").textContent;
+		const utterance = new SpeechSynthesisUtterance(content);
+			
+		if (use_voice) {
+			console.log("voice found");
+			utterance.voice = use_voice;};
+		
+		speechSynthesis.resume();		
+		utterance.rate = 1.75;
+		speechSynthesis.speak(utterance);
+}
+
+function toggle_voice() {
+
+	if (speechSynthesis.speaking) {
+			speechSynthesis.pause();}
+}
+
+function stop_voice() {
+
+	if (speechSynthesis.speaking) {
+			speechSynthesis.cancel();}
+}
+
+</script>
 
 </html>
