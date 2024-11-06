@@ -336,6 +336,11 @@ function regress() {
 	else{
 		alert("array dimension mismatch!");}
 	
+	//get max
+	let high_abs = Math.max(...y_arr);
+	let lm_index = y_arr.indexOf(high_abs);
+	let lambda_max = x_arr[lm_index];
+	
 	x_arr.forEach(function(xval,index) {
 		let temp_object = {x:xval, y:y_arr[index]};
 		combined_array.push(temp_object);})
@@ -361,8 +366,8 @@ function regress() {
                 display: true,
                 text: `Absorbance for ${molecule_for_chart}`},
             subtitle: {
-                display: false,
-                text: ""},
+                display: true,
+                text: `Lambda max: ${lambda_max}`},
 			legend: {align: 'center',
                      display: true,
                      position: 'right'}	},
