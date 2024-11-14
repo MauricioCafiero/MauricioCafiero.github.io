@@ -247,6 +247,11 @@ function show_dropped_image(file) {
 		image.src = event.target.result;});
 	
 	reader.readAsDataURL(file);
+	
+	const overlay = document.getElementById("pet_face_box");
+	const cs = overlay.getContext("2d");
+	cs.clearRect(0, 0, cs.canvas.width,cs.canvas.height);
+	console.log("clearing");
 }
 
 function parse_predictions(result) {
@@ -275,8 +280,8 @@ function parse_predictions(result) {
 	const face_box_width = (face_box[2] - face_box[0])*image_width;
 	const face_box_height = (face_box[3] - face_box[1])*image_height;
 	const c = overlay.getContext("2d");
-	c.strokeStyle = "#000000";
-	c.lindeWidth = 20;
+	c.strokeStyle = "#DFFF01";
+	c.lineWidth = 10;
 	c.strokeRect(start_x,start_y,face_box_width,face_box_height);
 	
 	
@@ -334,6 +339,11 @@ function capture() {
 	document.getElementById("process_image_b").disabled = false;
 	
 	stopStreamedVideo(preview);
+	
+	const overlay = document.getElementById("pet_face_box");
+	const cs = overlay.getContext("2d");
+	cs.clearRect(0, 0, cs.canvas.width,cs.canvas.height);
+	console.log("clearing");
 }
 
 function stopStreamedVideo(videoElem) {
