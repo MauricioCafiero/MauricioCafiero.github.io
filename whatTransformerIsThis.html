@@ -168,10 +168,10 @@
 		<ul>
 			<li>Are you having trouble identifying your favorite Transformer? Use this neural network to identify it!</li>
 			<li>Upload a picture or take a picture with your mobile device, or even use a webcam on a desk/laptop.</li>
-			<li>The model will run and see if it's Optimus, Megatron, Soundwave or Bumblebee!</li>
-			<li>The model works best on pictures of toys in robot mode. I've had near 100% accuracy for the four characters above, regardless of toyline 
+			<li>The model will run and see if it's one of nine different characters, including Autobots, Decepticons, and Camiens!</li>
+			<li>The model works best on pictures of toys in robot mode. Excellent accuracy for the characters included, regardless of toyline 
 			(vintage, generations, RID, Cyberverse, etc). Works okay for illustration/screen caps of characters.</li>
-			<li>Bumblebee and Soundwave (and maybe Optimus) should work in alt mode as well.</li> 
+			<li>Some characters work in alt mode as well. Give it a try!</li> 
 			<li>The Tensorflow model, MobileNet, is used as a base and it is fine-tuned to recognize transformers. </li>
 			<li>If you have any requests for figures to add, drop a comment at my Github repository: 
 			<a href="https://github.com/MauricioCafiero/Chemistry-and-Machine-Learning-WebApps-in-Javascript"> here!</a></li>
@@ -272,8 +272,11 @@ async function process_image() {
 	waiting.style.display="Block";
 	
 	try {
-		const modelURL = "https://teachablemachine.withgoogle.com/models/BSYvkfPwS/model.json";
-		const metadataURL = "https://teachablemachine.withgoogle.com/models/BSYvkfPwS/metadata.json";
+	
+		const modelURL = "https://teachablemachine.withgoogle.com/models/1KdHTVx-p/model.json";
+		const metadataURL = "https://teachablemachine.withgoogle.com/models/1KdHTVx-p/metadata.json";
+		//const modelURL = "https://teachablemachine.withgoogle.com/models/BSYvkfPwS/model.json";
+		//const metadataURL = "https://teachablemachine.withgoogle.com/models/BSYvkfPwS/metadata.json";
 		model = await tmImage.load(modelURL, metadataURL);
 		var maxPredictions = model.getTotalClasses();
 		console.log(`The total classes in the model are: ${maxPredictions}`);
@@ -303,7 +306,9 @@ function parse_predictions(predictions) {
 		things.push(dictionary.className);
 		probabilities.push(dictionary.probability);
 		prob = Math.round(100*dictionary.probability);
-		report_text += `${dictionary.className} : ${prob} % <br>`
+		if (prob > 20){
+			report_text += `${dictionary.className} : ${prob} % <br>`
+		}
 	}
 	);
 	const text_over = document.getElementById("user_image");
