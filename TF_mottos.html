@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Hero? or Villain?.</title>
+	<script src="https://cdn.jsdelivr.net/npm/profanity-cleaner@latest"></script>
+	
+	<style>
+		body {
+			color: White;
+			background-color: #26292B;
+			min-height: 100vh;
+			width: 95%;}
+			
+		#main_title {
+			border-radius: 25px;
+			display: flex;
+			flex-direction: row;
+			text-align: left;
+			margin: 0% 5% 2% 5%;
+			background-color: #5F7ADB;
+			width: 90%;}
+		
+		#menu_holder{
+			display: flex;
+			flex-direction: row;}
+			
+		.menu_box {
+			border-radius: 25px;
+			margin: 0% 2% 0% 2%;
+			text-align: center;
+			background-color: #DFFF00;
+			width: 30%;}		
+		
+		#intro {
+			width: 100%;}
+		
+		.main_flex {
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			text-align: left;
+			flex-wrap: wrap;
+			align-content: space-around;
+			justify-content: space-evenly;}
+		
+		#result_div {
+			display: flex;
+			flex-direction: column;
+			width: 45%;
+			text-align: left;
+			flex-wrap: wrap;
+			align-content: space-around;
+			justify-content: space-evenly;}
+		
+		.big_flex_divs {
+			width: 90%;
+			text-align: left;
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: row;
+			border-radius: 25px; 
+			border: 5px solid #FF00FF;
+			margin: 2% 2% 2% 2%;
+			padding: 2%;
+			text-align: left;
+			align-content: space-around;
+			justify-content: space-evenly;
+		}
+		
+		.flex_divs {
+			width: 40%;
+			text-align: left;
+			display: flex;
+			flex-direction: column;
+			border-radius: 25px; 
+			border: 5px solid #DFFF00;
+			margin: 2% 2% 2% 2%;
+			padding: 2%;
+			text-align: center; }
+
+			
+		input::-webkit-outer-spin-button,
+		input::-webkit-inner-spin-button {
+  		-webkit-appearance: none;
+  		margin: 0;}
+
+		input[type=number] {
+			text-align: center; 
+			-moz-appearance: textfield;}
+		
+		button {text-align: center;
+			width: 150px}
+	</style>
+</head>
+
+<body>
+	<div id="main_title"> <img  style="padding: 2% 1% 1% 5%;" src="images/comp_chem_2_small.jpg" alt="Computer"> 
+		<h1 style="padding: 50px;">Transformers motto classifier! Find out if you are a heroic Autobot or an evil Decepticon!</h1>
+	</div>
+	
+	<div id="menu_holder">
+		<a class="menu_box" href="whatTransformerIsThis.html" style="color: #00008B;">Transformer Identification</a>
+	</div>
+	<br>
+
+	<div id="intro">
+		<ul>
+			<li>We all know that if you believe that freedom is the right of all sentient beings, then you're an Autobot, or if you think peace can only 
+			be won through tyrrany, then you're a Decepticon, but what does <em>your</em> person motto say about <em>you</em>?</li>
+			<li>Enter your personal motto below and find out if you lean towards the 'bots or 'cons!</li>
+			<li>This model is a finetuned version of <a href="https://huggingface.co/docs/transformers/en/model_doc/roberta">
+			Roberta</a>, trained using the set of all 1984 - 1986 Transformers mottos.</li>
+			<li>Use this model using the HuggingFace pipeline. See the modelcard 
+			<a href="https://huggingface.co/cafierom/roberta-base-finetuned-TF-mottos">here!</a></li>
+		</ul>
+	</div>
+
+	<div class = "main_flex">
+		<div class="big_flex_divs">
+				<label for="motto">Enter your motto here:</label>
+				<input id="motto" type="text" style="width: 80%">
+		</div>
+		
+		<div class="flex_divs">
+			<div id="status_div" style="font-size: x-large">
+				Loading AI model, please wait... 
+			</div>
+			
+		</div>
+		
+		<div class="big_flex_divs">
+			<div id="result_div" style="font-size: x-large">
+				<div id="faction_div">
+					Whose side are <em>you</em> on??? 
+				</div>
+				<div id = "motto_div">
+				</div>
+				
+				<div id = "certainty_div" style = "font-size: small">
+				</div>
+			</div>
+				<img id="which_symbol" src = "images/symbol_both.jpg" alt = "indeterminate symbol" />
+		</div>
+	</div>
+	
+	
+	
+	
+	<p>This is the work of Dr. Mauricio Cafiero and may be used widely though attribution is appreciated.</p>
+</body>
+
+<script>
+
+var model_url = "https://pm8zmgkawb41ayc3.us-east-1.aws.endpoints.huggingface.cloud";   //Roberta
+//var model_url = "https://kmhhdtlogm8nkmwj.us-east-1.aws.endpoints.huggingface.cloud";   //Distilbert
+
+ping_endpoint();
+
+document.getElementById("motto").addEventListener("change", () => {
+	parse_motto();
+});
+
+async function ping_endpoint() {
+	const response = await fetch(
+		model_url,
+	).then( response => {
+		if (response.ok) {
+			document.getElementById("status_div").innerHTML = "";
+			document.getElementById("status_div").insertAdjacentHTML("beforeend","AI Model Loaded and ready!");
+		}
+		else {
+			setTimeout( () => {
+				ping_endpoint();
+			}, 1500);
+		}
+	}
+	);
+}
+
+async function query(data) {
+	const response = await fetch(
+		model_url,
+		{
+			headers: { 
+				"Accept" : "application/json",
+				"Content-Type": "application/json" 
+			},
+			method: "POST",
+			body: JSON.stringify(data),
+		}
+	);
+	const result = await response.json();
+	return result;
+}
+
+function parse_motto() {
+	let motto = document.getElementById("motto").value;
+	console.log(motto);
+	
+	let clean_motto = profanityCleaner.clean(motto, { keepFirstAndLastChar: true });
+	console.log(clean_motto);
+	
+	query({
+		"inputs": clean_motto,
+		"parameters": {}
+	}).then((response) => {
+		let res_string = JSON.stringify(response);
+		let res = res_string.split(":");
+		let res_fac = res[1].split('","');
+		let faction = res_fac[0].replace('"','');
+		let res_cert = res[2].replace(']}','');
+		let certainty = parseFloat(res_cert).toPrecision(3)
+		let faction_string = new String;
+		
+		let cerainty_string = `(${faction}! with a certainty of ${certainty})`
+		if (faction == "Autobot") {
+			faction_string = `Heroic Autobot`;
+			document.getElementById("which_symbol").src = "images/autosymbol.jpg";
+		} else {
+			faction_string = `Evil Decepticon`;
+			document.getElementById("which_symbol").src = "images/deceptisymbol.jpg";
+		}
+		let motto_string = `"${clean_motto}"`;
+		
+		document.getElementById("faction_div").innerHTML = "";
+		document.getElementById("faction_div").insertAdjacentHTML("afterBegin",faction_string);
+		
+		document.getElementById("motto_div").innerHTML = "";
+		document.getElementById("motto_div").insertAdjacentHTML("afterBegin",motto_string);
+		
+		document.getElementById("certainty_div").innerHTML = "";
+		document.getElementById("certainty_div").insertAdjacentHTML("afterBegin",cerainty_string);
+	});
+
+}
+
+</script>	
+  
+
+
+</html>
