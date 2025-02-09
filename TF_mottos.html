@@ -86,9 +86,10 @@
   		-webkit-appearance: none;
   		margin: 0;}
 
-		input[type=number] {
+		input[type=text] {
 			text-align: center; 
-			-moz-appearance: textfield;}
+			-moz-appearance: textfield;
+			font-size: x-large;}
 		
 		button {text-align: center;
 			width: 150px}
@@ -200,6 +201,7 @@ function parse_motto() {
 	console.log(motto);
 	
 	let clean_motto = profanityCleaner.clean(motto, { keepFirstAndLastChar: true });
+	clean_motto = clean_motto.replace("<","less than").replace("/>","").replace(">","greater than");
 	console.log(clean_motto);
 	
 	query({
