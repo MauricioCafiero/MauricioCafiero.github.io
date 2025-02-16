@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Predict IC50 in enzymes.</title>
+	<script src="https://cdn.jsdelivr.net/npm/profanity-cleaner@latest"></script>
+	
+	<style>
+		body {
+			color: White;
+			background-color: #26292B;
+			min-height: 100vh;
+			width: 95%;}
+			
+		#main_title {
+			border-radius: 25px;
+			display: flex;
+			flex-direction: row;
+			text-align: left;
+			margin: 0% 5% 2% 5%;
+			background-color: #5F7ADB;
+			width: 90%;}
+		
+		#menu_holder{
+			display: flex;
+			flex-direction: row;}
+			
+		.menu_box {
+			border-radius: 25px;
+			margin: 0% 2% 0% 2%;
+			text-align: center;
+			background-color: #DFFF00;
+			width: 30%;}		
+		
+		#intro {
+			width: 100%;}
+		
+		.main_flex {
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			text-align: left;
+			flex-wrap: wrap;
+			align-content: space-around;
+			justify-content: space-evenly;}
+		
+		#result_div {
+			display: flex;
+			flex-direction: column;
+			width: 45%;
+			text-align: left;
+			flex-wrap: wrap;
+			align-content: space-around;
+			justify-content: space-evenly;}
+		
+		.big_flex_divs {
+			width: 90%;
+			text-align: left;
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: row;
+			border-radius: 25px; 
+			border: 5px solid #FF00FF;
+			margin: 2% 2% 2% 2%;
+			padding: 2%;
+			text-align: left;
+			align-content: space-around;
+			justify-content: space-evenly;
+		}
+		
+		.flex_divs {
+			width: 40%;
+			text-align: left;
+			display: flex;
+			flex-direction: column;
+			border-radius: 25px; 
+			border: 5px solid #DFFF00;
+			margin: 2% 2% 2% 2%;
+			padding: 2%;
+			text-align: center; }
+
+		#model_choice {
+			display: flex;
+			flex-direction: column;
+			width: 15%;}
+			
+		input::-webkit-outer-spin-button,
+		input::-webkit-inner-spin-button {
+  		-webkit-appearance: none;
+  		margin: 0;}
+
+		input[type=text] {
+			text-align: center; 
+			-moz-appearance: textfield;
+			font-size: x-large;}
+		
+		button {text-align: center;
+			width: 150px}
+	</style>
+</head>
+
+<body>
+	<div id="main_title"> <img  style="padding: 2% 1% 1% 5%;" src="images/comp_chem_2_small.jpg" alt="Computer"> 
+		<h1 style="padding: 50px;">LLM-based IC50 prediction for molecules in various enzymes from SMILES strings</h1>
+	</div>
+	
+	<div id="menu_holder">
+		<a class="menu_box" href="Chem_webapps_frontpage.html" style="color: #00008B;">Back to Chemistry WebApps</a>
+	</div>
+	<br>
+
+	<div id="intro">
+		<ul>
+			<li>Large Language Models based on transformer-encoder architecture are very good at embedding text and finding relationships
+			between letters/words in the text.</li>
+			<li>These models used a transformer-encoder LLM to classify molecules' potency (IC50 value) based <em>only
+			on SMILES strings</em>.</li>
+			<li>These models can achive very high accuracy from fairly little fine-tuning.</li>
+			<li>These models are finetuned versions of <a href="https://huggingface.co/docs/transformers/en/model_doc/bert">
+			BERT</a>, trained using experimental IC50 values from <a href="https://www.ebi.ac.uk/chembl/">ChEMBL</a>.</li>
+			<li>Use these model with the HuggingFace pipeline. See the modelcards linked below! </li>
+		</ul>
+	</div>
+
+	<div class = "main_flex">
+		<div class="big_flex_divs" style="font-size: x-large">
+				<label for="motto">Choose enzyme and then wait for the model to load:</label>
+				
+			<div id = "model_choice">
+				<div>
+				<input type="radio" id="hmgcr" name="number_model_choice" value="1">
+				<label for="model_1">HMGCR <a href="https://huggingface.co/cafierom/bert-base-uncased-finetuned-HMGCR-IC50s-V3">(model card)</a></label>
+				</div>
+				<div>
+				<input type="radio" id="lmaob" name="number_model_choice" value="2">
+				<label for="model_2">MAOB <a href="https://huggingface.co/cafierom/bert-base-uncased-finetuned-MAOB-IC50s-V2">(model card)</a></label>
+				</div>
+			</div>
+				
+		</div>
+	
+		<div class="big_flex_divs" style="font-size: x-large">
+				<label for="smile_input">Enter SMILES for IC50 classification and hit 'Enter':</label>
+				<input id="smile_input" type="text" style="width: 80%">
+		</div>
+		
+		<div class="flex_divs">
+			<div id="status_div" style="font-size: x-large">
+				Loading AI model, please wait... 
+			</div>
+			
+		</div>
+		
+		<div class="big_flex_divs">
+			<div id="result_div" style="font-size: x-large">
+				<div id="faction_div">
+					IC50 classification ... 
+				</div>
+			</div>	
+		</div>
+	</div>
+	
+	
+	
+	
+	<p>This is the work of Dr. Mauricio Cafiero and may be used widely though attribution is appreciated.</p>
+</body>
+
+<script>
+
+var hmgcr_model_url = "https://uwcp797plvliac74.us-east-1.aws.endpoints.huggingface.cloud";  
+var maob_model_url = "https://e5eofdy70snchntt.us-east-1.aws.endpoints.huggingface.cloud"; 
+var model_url, enzyme_name;
+
+document.getElementById("model_choice").addEventListener("change", () => {
+	
+	let model_number = get_model_type();
+	if (model_number == 1){
+		model_url = hmgcr_model_url;
+		enzyme_name = "HMGCR";
+		ping_endpoint(hmgcr_model_url);
+	} else if (model_number == 2) {
+		model_url = maob_model_url;
+		enzyme_name = "MAOB"
+		ping_endpoint(maob_model_url);
+	}
+});
+
+document.getElementById("smile_input").addEventListener("keyup", ({key}) => {
+	if(key === "Enter"){
+		parse_smile();
+	}
+});
+
+function get_model_type() {
+	document.getElementById("status_div").innerHTML = "";
+	document.getElementById("status_div").insertAdjacentHTML("beforeend","Loading AI model, please wait...");
+
+	var m_choice = document.getElementsByName("number_model_choice");
+
+	for (i = 0; i < m_choice.length; i++) {
+                if (m_choice[i].checked){
+                    var use_model = m_choice[i].value;}}
+
+	return use_model;
+}
+
+async function ping_endpoint(which_url) {
+	const response = await fetch(
+		which_url,
+	).then( response => {
+		if (response.ok) {
+			document.getElementById("status_div").innerHTML = "";
+			document.getElementById("status_div").insertAdjacentHTML("beforeend","AI Model Loaded and ready!");
+		}
+		else {
+			setTimeout( () => {
+				ping_endpoint(which_url);
+			}, 1500);
+		}
+	}
+	);
+}
+
+async function query(data) {
+
+	const response = await fetch(
+		model_url,
+		{
+			headers: { 
+				"Accept" : "application/json",
+				"Content-Type": "application/json" 
+			},
+			method: "POST",
+			body: JSON.stringify(data),
+		}
+	);
+	const result = await response.json();
+	return result;
+}
+
+function parse_smile() {
+	let smile = document.getElementById("smile_input").value;
+	
+	let clean_smile = profanityCleaner.clean(smile, { keepFirstAndLastChar: true });
+	clean_smile = clean_smile.replace("<","less than").replace("/>","").replace(">","greater than");
+	console.log(clean_smile);
+	
+	query({
+		"inputs": clean_smile,
+		"parameters": {}
+	}).then((response) => {
+		let res_string = JSON.stringify(response);
+		let res = res_string.split(":");
+		let res_fac = res[1].split('","');
+		let faction = res_fac[0].replace('"','');
+		let res_cert = res[2].replace(']}','');
+		let certainty = parseFloat(res_cert).toPrecision(3)
+		let smile_string = `"${clean_smile}"`;
+		
+		let faction_string = `${smile_string} has an IC50 ${faction} in ${enzyme_name} with a certainty of ${certainty}`
+		
+		document.getElementById("faction_div").innerHTML = "";
+		document.getElementById("faction_div").insertAdjacentHTML("afterBegin",faction_string);
+		document.getElementById("faction_div").scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+		
+	});
+
+}
+
+</script>	
+  
+
+
+</html>
