@@ -118,7 +118,8 @@
 			on SMILES strings</em>.</li>
 			<li>These models can achive very high accuracy from fairly little fine-tuning.</li>
 			<li>These models are finetuned versions of <a href="https://huggingface.co/docs/transformers/en/model_doc/bert">
-			BERT</a>, trained using experimental IC50 values from <a href="https://www.ebi.ac.uk/chembl/">ChEMBL</a>.</li>
+			BERT</a>, first domain-adapted to chemistry using 40,000 molecule structures and thentrained using experimental 
+			IC50 values from <a href="https://www.ebi.ac.uk/chembl/">ChEMBL</a>.</li>
 			<li>Use these model with the HuggingFace pipeline. See the modelcards linked below! </li>
 		</ul>
 	</div>
@@ -130,11 +131,11 @@
 			<div id = "model_choice">
 				<div>
 				<input type="radio" id="hmgcr" name="number_model_choice" value="1">
-				<label for="model_1">HMGCR <a href="https://huggingface.co/cafierom/bert-base-uncased-finetuned-HMGCR-IC50s-V3">(model card)</a></label>
+				<label for="model_1">HMGCR <a href="https://huggingface.co/cafierom/bert-base-cased-DA-ChemTok-ZN1540K-V1-finetuned-HMGCR-IC50s-V1">(model card)</a></label>
 				</div>
 				<div>
 				<input type="radio" id="lmaob" name="number_model_choice" value="2">
-				<label for="model_2">MAOB <a href="https://huggingface.co/cafierom/bert-base-uncased-finetuned-MAOB-IC50s-V2">(model card)</a></label>
+				<label for="model_2">MAOB <a href="https://huggingface.co/cafierom/bert-base-cased-DA-ChemTok-ZN1540K-V1-finetuned-MAOB-IC50s-V1">(model card)</a></label>
 				</div>
 			</div>
 				
