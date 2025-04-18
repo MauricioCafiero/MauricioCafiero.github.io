@@ -132,7 +132,7 @@
 		</div>
 	
 		<div class="big_flex_divs" style="font-size: x-large">
-				<label for="motto">Enter 1-3 words here to start:</label>
+				<label for="motto">Enter 1-3 words here to start your motto and hit enter:</label>
 				<input id="motto" type="text" style="width: 80%">
 		</div>
 		
@@ -217,16 +217,19 @@ function parse_motto() {
 		"parameters": {}
 	}).then((response) => {
 		let res_string = JSON.stringify(response);
-		console.log(res_string);
 		let res = res_string.split(":");
-		let res_motto = res[1].replace('}]','');
-		
+		let res_motto = res[1].replace('}]','').replace(/\"/g,'');
 		let motto_string = `${res_motto}`;
 		
-		
-		document.getElementById("motto_div").innerHTML = "";
-		document.getElementById("motto_div").insertAdjacentHTML("afterBegin",motto_string);
-		document.getElementById("motto_div").scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+		if(res_motto.replace(/\./,'') == clean_motto){
+			alert("Your phrase was either already a complete thought or it didn't make sense as the start of a motto! Please try again!");
+		} else if(res_motto.replace(/\./,'') == `${clean_motto}s`) {
+			alert("Hmmm, the AI didn't like that word. Please try again!");
+		} else {		
+			document.getElementById("motto_div").innerHTML = "";
+			document.getElementById("motto_div").insertAdjacentHTML("afterBegin",motto_string);
+			document.getElementById("motto_div").scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+		};
 	});
 
 }
