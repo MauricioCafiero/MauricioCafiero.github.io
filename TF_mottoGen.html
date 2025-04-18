@@ -226,6 +226,7 @@ function parse_motto() {
 		
 		document.getElementById("motto_div").innerHTML = "";
 		document.getElementById("motto_div").insertAdjacentHTML("afterBegin",motto_string);
+		document.getElementById("motto_div").scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
 	});
 
 }
