@@ -309,159 +309,108 @@ function draw_plot(prop_object,destroy_old) {
 	plot_canvas.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
 }
 
-class Convertor extends React.Component {
-	constructor() {
-		super();
-		this.state = {};
-		this.onMassChange = this.onMassChange.bind(this);
-		this.onLengthChange = this.onLengthChange.bind(this);
-		this.onElecChange = this.onElecChange.bind(this);
-		this.onNinitChange = this.onNinitChange.bind(this);
-		this.onNfinChange = this.onNfinChange.bind(this);
-		this.onPinitChange = this.onPinitChange.bind(this);
-		this.onPfinChange = this.onPfinChange.bind(this);
-	}
-	
-	onMassChange(event) {
-		this.setState({
-			mass: event.target.value,
-		});
-	}
-	
-	onLengthChange(event) {
-		this.setState({
-			b_length: event.target.value,
-		});
-	}
-	
-	onElecChange(event) {
-		this.setState({
-			elec: event.target.value,
-		});
-	}
-	
-	onNinitChange(event) {
-		this.setState({
-			ninit: event.target.value,
-		});
-	}
-	
-	onNfinChange(event) {
-		this.setState({
-			nfin: event.target.value,
-		});
-	}
-	
-	onPinitChange(event) {
-		this.setState({
-			pinit: event.target.value,
-		});
-	}
-	
-	onPfinChange(event) {
-		this.setState({
-			pfin: event.target.value,
-		});
-	}
-	
-	shouldComponentUpdate(newProps,newState) {
-		let all_updated_props = Object.keys(newState);
-		let temp_obj = new Object();
-		for (const property in newProps) {
-			if (all_updated_props.includes(property)){
-				//console.log(`new state: ${property}:${newState[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newState[property];
-				}
-			else {					
-				//console.log(`old state: ${property}:${newProps[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newProps[property];
-				}
-		};
-		//console.log(temp_obj);
-		//if (temp_obj['pinit'] > temp_obj['pfin'] || temp_obj['pinit'] < 0 || temp_obj['pfin'] > temp_obj['b_length']) {
-		//	alert("Invalid limits for probability calculation! Result will not be accurate.");};
-		draw_plot(temp_obj,true);
-		draw_canvas(temp_obj);
-		return true;
-	}
-	
-	componentDidMount() {
-		draw_plot(this.props,false);
-		draw_canvas(this.props);
+function Convertor(props) {
+	const [massState, setMassState] = React.useState();
+	const [bLengthState, setBLengthState] = React.useState();
+	const [elecState, setElecState] = React.useState();
+	const [ninitState, setNinitState] = React.useState();
+	const [nfinState, setNfinState] = React.useState();
+	const [pinitState, setPinitState] = React.useState();
+	const [pfinState, setPfinState] = React.useState();
+
+	const mass = (massState !== undefined) ? massState : props.mass;
+	let b_length = (bLengthState !== undefined) ? bLengthState : props.b_length;
+	const elec = (elecState !== undefined) ? elecState : props.elec;
+	const ninit = (ninitState !== undefined) ? ninitState : props.ninit;
+	const nfin = (nfinState !== undefined) ? nfinState : props.nfin;
+	const pinit = (pinitState !== undefined) ? pinitState : props.pinit;
+	const pfin = (pfinState !== undefined) ? pfinState : props.pfin;
+
+	let gamma = Math.pow((h/(b_length*Math.pow(10,-10))),2)/(8*mass);
+	gamma = gamma.toPrecision(4);
+
+	if (pinit > pfin || pinit < 0) {
+		alert("Invalid limits for probability calculation! Result will not be accurate.");
 	}
 
-	render() {
-		const mass = 'mass' in this.state ? this.state.mass : this.props.mass;
-		let b_length = 'b_length' in this.state ? this.state.b_length : this.props.b_length;
-		const elec = 'elec' in this.state ? this.state.elec : this.props.elec;
-		const ninit = 'ninit' in this.state ? this.state.ninit : this.props.ninit;
-		const nfin = 'nfin' in this.state ? this.state.nfin : this.props.nfin;
-		const pinit = 'pinit' in this.state ? this.state.pinit : this.props.pinit;
-		const pfin = 'pfin' in this.state ? this.state.pfin : this.props.pfin;
-		let gamma = Math.pow((h/(b_length*Math.pow(10,-10))),2)/(8*mass);
-		gamma = gamma.toPrecision(4);
-		
-		if (pinit > pfin || pinit < 0 || pfin > b_length) {
-			alert("Invalid limits for probability calculation! Result will not be accurate.");}
-		
-		function prob(length, elec, a,b) {
-			let homo = Math.ceil(elec/2);
-			let llength = b_length;
-			let proba = (2/llength)*(((b/2)-((llength/4/homo/Math.PI)*Math.sin(2*homo*Math.PI*b/llength)))-((a/2)-((llength/4/homo/Math.PI)*Math.sin(2*homo*Math.PI*a/llength))));
-			return proba;
+	function prob(length, elecval, a, b) {
+		let homo = Math.ceil(elecval/2);
+		let llength = b_length;
+		if (b > llength) {
+			b = llength;
 		}
-		
-		return (
-			<div id="flex_box_1">
-				<div className="prompts"> Enter a particle mass below (kg): <br/>
-					<input type="number" className="values" value={mass} onChange={event => this.onMassChange(event)} />
-				</div>
-				<div className="prompts"> Enter a box length below (Angstroms): <br/>
-					<input type="number" className="values" value={b_length} onChange={event => this.onLengthChange(event)} />
-				</div>
-				<div className="prompts"> Enter the number of electrons below: <br/>
-					<input type="number" className="values" value={elec} onChange={event => this.onElecChange(event)} />
-				</div>
-				<div className="prompts"> Enter an <strong>initial and final n </strong>value for a general transition below: <br/>
-					<label>n<sub>i</sub>  </label>
-					<input type="number" className="values" value={ninit} onChange={event => this.onNinitChange(event)} /> <br/>
-					<label>n<sub>f</sub>  </label>
-					<input type="number" className="values" value={nfin} onChange={event => this.onNfinChange(event)} />
-				</div>
-				<div className="prompts"> Enter <strong>initial and final positions </strong> to calculate a probability of 
-				finding the particle within that space below (Angstroms): <br/>
-					<label>x<sub>i</sub>  </label>
-					<input type="number" className="values" value={pinit} onChange={event => this.onPinitChange(event)} /> <br/>
-					<label>x<sub>f</sub>  </label>
-					<input type="number" className="values" value={pfin} onChange={event => this.onPfinChange(event)} />
-				</div>
-				<br/>
-				<div className="responses">
-					The energy multiplier is:<br/>
-					<em>h<sup>2</sup>/(8mL<sup>2</sup>)</em>  = {gamma} J.<br/><br/>
-					The highest occupied orbital is <em>n={Math.ceil(elec/2)}</em>
-				</div>
-				<div className="responses">
-					The highest occupied orbital has an energy of: {(Math.pow(Math.ceil(elec/2),2)*gamma).toPrecision(3)} J.<br/><br/>
-					The lowest unoccupied orbital has an energy of: {(Math.pow(Math.ceil((elec/2)+1),2)*gamma).toPrecision(3)} J.<br/>
-				</div>
-				<div className="responses">
-					The HOMO/LUMO gap energy is: {((2*Math.ceil(elec/2)+1)*gamma).toPrecision(4)} J.<br/><br/>
-					The transition wavelength is: {(Math.pow(10,17)*((3*h/gamma)/(2*Math.ceil(elec/2)+1))).toFixed(2)} nm.<br/>
-				</div>
-				<div className="responses">
-					The transition energy between levels {ninit} and {nfin} is: {(Math.abs((Math.pow(ninit,2)-Math.pow(nfin,2))*gamma)).toPrecision(4)} J.<br/><br/>
-					The transition wavelength is: {(Math.pow(10,17)*(h*3/Math.abs((Math.pow(ninit,2)-Math.pow(nfin,2))*gamma))).toFixed(2)} nm. <br/>
-				</div>
-				<div className="responses">
-					The probability of finding the particle between {pinit} and {pfin} in the HOMO is: {prob(b_length,elec,pinit,pfin).toPrecision(4)}<br/>
-				</div>
-			</div>
-		);
+		let proba = (2/llength)*(((b/2)-((llength/4/homo/Math.PI)*Math.sin(2*homo*Math.PI*b/llength)))-((a/2)-((llength/4/homo/Math.PI)*Math.sin(2*homo*Math.PI*a/llength))));
+		return proba;
 	}
 
+	const currentPropsObject = {
+		mass: mass,
+		b_length: b_length,
+		elec: elec,
+		ninit: ninit,
+		nfin: nfin,
+		pinit: pinit,
+		pfin: pfin
+	};
+
+	React.useEffect(() => {
+		draw_plot(currentPropsObject, false);
+		draw_canvas(currentPropsObject);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	React.useEffect(() => {
+		draw_plot(currentPropsObject, true);
+		draw_canvas(currentPropsObject);
+	}, [mass, b_length, elec, ninit, nfin, pinit, pfin]);
+
+	return (
+		<div id="flex_box_1">
+			<div className="prompts"> Enter a particle mass below (kg): <br/>
+				<input type="number" className="values" value={mass} onChange={event => setMassState(event.target.value)} />
+			</div>
+			<div className="prompts"> Enter a box length below (Angstroms): <br/>
+				<input type="number" className="values" value={b_length} onChange={event => setBLengthState(event.target.value)} />
+			</div>
+			<div className="prompts"> Enter the number of electrons below: <br/>
+				<input type="number" className="values" value={elec} onChange={event => setElecState(event.target.value)} />
+			</div>
+			<div className="prompts"> Enter an <strong>initial and final n </strong>value for a general transition below: <br/>
+				<label>n<sub>i</sub>  </label>
+				<input type="number" className="values" value={ninit} onChange={event => setNinitState(event.target.value)} /> <br/>
+				<label>n<sub>f</sub>  </label>
+				<input type="number" className="values" value={nfin} onChange={event => setNfinState(event.target.value)} />
+			</div>
+			<div className="prompts"> Enter <strong>initial and final positions </strong> to calculate a probability of 
+			finding the particle within that space below (Angstroms): <br/>
+				<label>x<sub>i</sub>  </label>
+				<input type="number" className="values" value={pinit} onChange={event => setPinitState(event.target.value)} /> <br/>
+				<label>x<sub>f</sub>  </label>
+				<input type="number" className="values" value={pfin} onChange={event => setPfinState(event.target.value)} />
+			</div>
+			<br/>
+			<div className="responses">
+				The energy multiplier is:<br/>
+				<em>h<sup>2</sup>/(8mL<sup>2</sup>)</em>  = {gamma} J.<br/><br/>
+				The highest occupied orbital is <em>n={Math.ceil(elec/2)}</em>
+			</div>
+			<div className="responses">
+				The highest occupied orbital has an energy of: {(Math.pow(Math.ceil(elec/2),2)*gamma).toPrecision(3)} J.<br/><br/>
+				The lowest unoccupied orbital has an energy of: {(Math.pow(Math.ceil((elec/2)+1),2)*gamma).toPrecision(3)} J.<br/>
+			</div>
+			<div className="responses">
+				The HOMO/LUMO gap energy is: {((2*Math.ceil(elec/2)+1)*gamma).toPrecision(4)} J.<br/><br/>
+				The transition wavelength is: {(Math.pow(10,17)*((3*h/gamma)/(2*Math.ceil(elec/2)+1))).toFixed(2)} nm.<br/>
+			</div>
+			<div className="responses">
+				The transition energy between levels {ninit} and {nfin} is: {(Math.abs((Math.pow(ninit,2)-Math.pow(nfin,2))*gamma)).toPrecision(4)} J.<br/><br/>
+				The transition wavelength is: {(Math.pow(10,17)*(h*3/Math.abs((Math.pow(ninit,2)-Math.pow(nfin,2))*gamma))).toFixed(2)} nm. <br/>
+			</div>
+			<div className="responses">
+				The probability of finding the particle between {pinit} and {pfin} in the HOMO is: {prob(b_length,elec,pinit,pfin).toPrecision(4)}<br/>
+			</div>
+		</div>
+	);
 }
 
 Convertor.defaultProps = {
@@ -479,6 +428,73 @@ ReactDOM.render(
 	document.getElementById("main_flex")
 );
 
+// ------------------------------
+// Lightweight console test suite
+// ------------------------------
+
+function approxEqual(a, b, relTol = 1e-3, absTol = 1e-9) {
+	if (!isFinite(a) || !isFinite(b)) return false;
+	const diff = Math.abs(a - b);
+	return diff <= Math.max(relTol * Math.max(Math.abs(a), Math.abs(b)), absTol);
+}
+
+function computeGamma(mass, b_length) {
+	return Math.pow((h/(b_length*Math.pow(10,-10))),2)/(8*mass);
+}
+
+function computeHomo(elec) {
+	return Math.ceil(elec/2);
+}
+
+function computeTransitionWavelengthNm(ninit, nfin, gamma) {
+	const delta = Math.abs((Math.pow(ninit,2)-Math.pow(nfin,2)) * gamma);
+	return Math.pow(10,17) * (h*3 / delta);
+}
+
+function probabilityHOMO(lengthAng, elec, aAng, bAng) {
+	const homo = computeHomo(elec);
+	const L = lengthAng;
+	const term = (x) => (x/2) - ((L/(4*homo*Math.PI)) * Math.sin(2*homo*Math.PI*x/L));
+	return (2/L) * (term(bAng) - term(aAng));
+}
+
+function runConsoleTests() {
+	try {
+		const results = [];
+		const add = (name, pass, details) => results.push({ test: name, pass: !!pass, details: details || "" });
+		const defaults = { mass: 9.1E-31, L: 10, elec: 4 };
+		// HOMO
+		const homo = computeHomo(defaults.elec);
+		add("HOMO for 4 electrons is 2", homo === 2, `got ${homo}`);
+		// Gamma scaling with L
+		const g10 = computeGamma(defaults.mass, 10);
+		const g20 = computeGamma(defaults.mass, 20);
+		add("Gamma scales 1/L^2 (20Å => 1/4)", approxEqual(g20, g10/4, 1e-4), `g10=${g10}, g20=${g20}`);
+		// Gamma scaling with mass
+		const gMass10 = computeGamma(defaults.mass*10, defaults.L);
+		add("Gamma scales 1/m (10x mass => 1/10)", approxEqual(gMass10, g10/10, 1e-4), `gMass10=${gMass10}`);
+		// Wavelength ratio for general transitions
+		const g = g10;
+		const lam12 = computeTransitionWavelengthNm(1,2,g);
+		const lam13 = computeTransitionWavelengthNm(1,3,g);
+		const expectedRatio = 3/8; // λ_13 / λ_12 = (ΔE_12 / ΔE_13) = 3/8
+		add("λ ratio (1→3)/(1→2) = 3/8", approxEqual(lam13/lam12, expectedRatio, 2e-3), `ratio=${lam13/lam12}`);
+		// Probability integrals
+		const pFull = probabilityHOMO(defaults.L, defaults.elec, 0, defaults.L);
+		add("P[0,L] ≈ 1", approxEqual(pFull, 1.0, 1e-3, 1e-4), `P=${pFull}`);
+		const pHalf = probabilityHOMO(defaults.L, defaults.elec, 0, defaults.L/2);
+		add("P[0,L/2] ≈ 0.5", approxEqual(pHalf, 0.5, 1e-3, 1e-4), `P=${pHalf}`);
+		const passed = results.every(r => r.pass);
+		console.groupCollapsed(`PIB tests (${passed ? "all passed" : "some failed"})`);
+		console.table(results);
+		console.groupEnd();
+	} catch (e) {
+		console.error("Test suite error:", e);
+	}
+}
+
+// Run tests after initial render
+setTimeout(runConsoleTests, 0);
 </script>
 
 </html>

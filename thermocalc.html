@@ -170,137 +170,76 @@ var h = 6.626E-34;
 var c = 3.0E8 ;
 var R = 8.3144621;
 
-class ConstP extends React.Component {
-	constructor() {
-		super();
-		this.state = {};
-		this.onT1Change = this.onT1Change.bind(this);
-		this.onT2Change = this.onT2Change.bind(this);
-		this.onP1Change = this.onP1Change.bind(this);
-		this.onMolChange = this.onMolChange.bind(this);
-		this.onCvChange = this.onCvChange.bind(this);
-	}
-	
-	onT1Change(event) {
-		this.setState({
-			T1: event.target.value,
-		});
-	}
-	
-	onT2Change(event) {
-		this.setState({
-			T2: event.target.value,
-		});
-	}
-	
-	onP1Change(event) {
-		this.setState({
-			P1: event.target.value,
-		});
-	}
-	
-	onMolChange(event) {
-		this.setState({
-			Mol: event.target.value,
-		});
-	}
-	
-	onCvChange(event) {
-		this.setState({
-			Cv: event.target.value,
-		});
-	}
-	
-	
-	shouldComponentUpdate(newProps,newState) {
-		let all_updated_props = Object.keys(newState);
-		let temp_obj = new Object();
-		for (const property in newProps) {
-			if (all_updated_props.includes(property)){
-				//console.log(`new state: ${property}:${newState[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newState[property];
-				}
-			else {					
-				//console.log(`old state: ${property}:${newProps[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newProps[property];
-				}
-		};
-		console.log(temp_obj);
-		return true;
-	}
-	
-	componentDidMount() {
-		console.log("something");
-	}
+function ConstP(props) {
+	const [T1State, setT1State] = React.useState();
+	const [T2State, setT2State] = React.useState();
+	const [P1State, setP1State] = React.useState();
+	const [MolState, setMolState] = React.useState();
+	const [CvState, setCvState] = React.useState();
 
-	render() {
-		const T1 = 'T1' in this.state ? this.state.T1 : this.props.T1;
-		const T2 = 'T2' in this.state ? this.state.T2 : this.props.T2;
-		const P1 = 'P1' in this.state ? this.state.P1 : this.props.P1;
-		const Mol = 'Mol' in this.state ? this.state.Mol : this.props.Mol;
-		const Cv = 'Cv' in this.state ? this.state.Cv : this.props.Cv;
-		let Cp = parseFloat(Cv)+R;
+	const T1 = (T1State !== undefined) ? T1State : props.T1;
+	const T2 = (T2State !== undefined) ? T2State : props.T2;
+	const P1 = (P1State !== undefined) ? P1State : props.P1;
+	const Mol = (MolState !== undefined) ? MolState : props.Mol;
+	const Cv = (CvState !== undefined) ? CvState : props.Cv;
+	let Cp = parseFloat(Cv)+R;
+
+	return (
+		<div id="flex_box_1">
 		
-		return (
-			<div id="flex_box_1">
-			
-				<div className="section_heads"> Constant Pressure Process
-				</div>
-				<div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
-					<label>n &nbsp; &nbsp;
-					<input type="number" className="values" value={Mol} onChange={event => this.onMolChange(event)} /> <sub>   </sub></label><br/>
-					<label>C<sub>V  </sub>
-					<input type="number" className="values" value={Cv} onChange={event => this.onCvChange(event)}  /> J/mol/K</label>
-				</div>
-				
-				<div className="prompts"> Enter initial and final temperatures below (K): <br/>
-					<label>T<sub>i  </sub>  
-					<input type="number" className="values" value={T1} onChange={event => this.onT1Change(event)} /></label><br/>
-					<label>T<sub>f  </sub>
-					<input type="number" className="values" value={T2} onChange={event => this.onT2Change(event)} /></label>
-				</div>
-				
-				<div className="prompts"> Initial and final volumes (L): <br/>
-					<div> V<sub>i</sub> = {(Mol*0.08206*T1/P1).toPrecision(6)}<br/>
-					V<sub>f</sub> = {(Mol*0.08206*T2/P1).toPrecision(6)}</div>
-				</div>
-				
-				<div className="prompts"> Enter the pressure below (atm): <br/>
-					<label>P<sub>i  </sub>  
-					<input type="number" className="values" value={P1} onChange={event => this.onP1Change(event)} /></label><br/>
-				</div>
-				
-				<div className="responses">
-					The internal energy is:<br/>
-					&Delta;U= nC<sub>v</sub>&Delta;T  = {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The heat is:<br/>
-					q = &Delta;H = {(Mol*Cp*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The work is:<br/>
-					w = &Delta;U- q = {(-(Mol*R*(T2-T1))).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The enthalpy is:<br/>
-					&Delta;H = nC<sub>P</sub>&Delta;T = {(Mol*(Cp)*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The entropy is:<br/>
-					&Delta;S = nC<sub>p</sub>ln(T<sub>2</sub>/T<sub>1</sub>) = {(Mol*(Cp)*Math.log(T2-T1)).toPrecision(6)} J/K.<br/><br/>
-				</div>
-				
+			<div className="section_heads"> Constant Pressure Process
 			</div>
-		);
-	}
-
+			<div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
+				<label>n &nbsp; &nbsp;
+				<input type="number" className="values" value={Mol} onChange={event => setMolState(event.target.value)} /> <sub>   </sub></label><br/>
+				<label>C<sub>V  </sub>
+				<input type="number" className="values" value={Cv} onChange={event => setCvState(event.target.value)}  /> J/mol/K</label>
+			</div>
+			
+			<div className="prompts"> Enter initial and final temperatures below (K): <br/>
+				<label>T<sub>i  </sub>  
+				<input type="number" className="values" value={T1} onChange={event => setT1State(event.target.value)} /></label><br/>
+				<label>T<sub>f  </sub>
+				<input type="number" className="values" value={T2} onChange={event => setT2State(event.target.value)} /></label>
+			</div>
+			
+			<div className="prompts"> Initial and final volumes (L): <br/>
+				<div> V<sub>i</sub> = {(Mol*0.08206*T1/P1).toPrecision(6)}<br/>
+				V<sub>f</sub> = {(Mol*0.08206*T2/P1).toPrecision(6)}</div>
+			</div>
+			
+			<div className="prompts"> Enter the pressure below (atm): <br/>
+				<label>P<sub>i  </sub>  
+				<input type="number" className="values" value={P1} onChange={event => setP1State(event.target.value)} /></label><br/>
+			</div>
+			
+			<div className="responses">
+				The internal energy is:<br/>
+				&Delta;U= nC<sub>v</sub>&Delta;T  = {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
+			</div>
+			
+			<div className="responses">
+				The heat is:<br/>
+				q = &Delta;H = {(Mol*Cp*(T2-T1)).toPrecision(6)} J.<br/><br/>
+			</div>
+			
+			<div className="responses">
+				The work is:<br/>
+				w = &Delta;U- q = {(-(Mol*R*(T2-T1))).toPrecision(6)} J.<br/><br/>
+			</div>
+			
+			<div className="responses">
+				The enthalpy is:<br/>
+				&Delta;H = nC<sub>P</sub>&Delta;T = {(Mol*(Cp)*(T2-T1)).toPrecision(6)} J.<br/><br/>
+			</div>
+			
+			<div className="responses">
+				The entropy is:<br/>
+				&Delta;S = nC<sub>p</sub>ln(T<sub>2</sub>/T<sub>1</sub>) = {(Mol*(Cp)*Math.log(T2-T1)).toPrecision(6)} J/K.<br/><br/>
+			</div>
+			
+		</div>
+	);
 }
 
 ConstP.defaultProps = {
@@ -322,137 +261,77 @@ document.getElementById("constp_b").addEventListener("click", () => {
 
 // Reversible, Isothermal ===========================================================================================================================
 
-class RevIso extends React.Component {
-	constructor() {
-		super();
-		this.state = {};
-		this.onT1Change = this.onT1Change.bind(this);
-		this.onV1Change = this.onV1Change.bind(this);
-		this.onV2Change = this.onV2Change.bind(this);
-		this.onMolChange = this.onMolChange.bind(this);
-		this.onCvChange = this.onCvChange.bind(this);	
-	}
-	
-	onT1Change(event) {
-		this.setState({
-			T1: event.target.value,
-		});
-	}
-	
-	onV1Change(event) {
-		this.setState({
-			V1: event.target.value,
-		});
-	}
-	
-	onV2Change(event) {
-		this.setState({
-			V2: event.target.value,
-		});
-	}
-	
-	onMolChange(event) {
-		this.setState({
-			Mol: event.target.value,
-		});
-	}
-	
-	onCvChange(event) {
-		this.setState({
-			Cv: event.target.value,
-		});
-	}
-	
-	shouldComponentUpdate(newProps,newState) {
-		let all_updated_props = Object.keys(newState);
-		let temp_obj = new Object();
-		for (const property in newProps) {
-			if (all_updated_props.includes(property)){
-				//console.log(`new state: ${property}:${newState[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newState[property];
-				}
-			else {					
-				//console.log(`old state: ${property}:${newProps[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newProps[property];
-				}
-		};
-		console.log(temp_obj);
-		return true;
-	}
-	
-	componentDidMount() {
-		console.log("something");
-	}
+function RevIso(props) {
+    const [T1State, setT1State] = React.useState();
+    const [V1State, setV1State] = React.useState();
+    const [V2State, setV2State] = React.useState();
+    const [MolState, setMolState] = React.useState();
+    const [CvState, setCvState] = React.useState();
 
-	render() {
-		const T1 = 'T1' in this.state ? this.state.T1 : this.props.T1;
-		const V1 = 'V1' in this.state ? this.state.V1 : this.props.V1;
-		const V2 = 'V2' in this.state ? this.state.V2 : this.props.V2;
-		const Mol = 'Mol' in this.state ? this.state.Mol : this.props.Mol;
-		const Cv = 'Cv' in this.state ? this.state.Cv : this.props.Cv;
-		let Cp = parseFloat(Cv)+R;
-		
-		return (
-			<div id="flex_box_1">
-			
-				<div className="section_heads"> Reversible, Isothermal Process
-				</div>
-			
-				<div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
-					<label>n &nbsp; &nbsp;
-					<input type="number" className="values" value={Mol} onChange={event => this.onMolChange(event)} /> <sub>   </sub></label><br/>
-					<label>C<sub>V  </sub>
-					<input type="number" className="values" value={Cv} onChange={event => this.onCvChange(event)}  /> J/mol/K</label>
-				</div>
-				
-				<div className="prompts"> Enter the temperature below (K): <br/>
-					<label>T  
-					<input type="number" className="values" value={T1} onChange={event => this.onT1Change(event)} /></label><br/>
-				</div>
-				
-				<div className="prompts"> Enter initial and final volumes below (L): <br/>
-					<label>V<sub>i  </sub>  
-					<input type="number" className="values" value={V1} onChange={event => this.onV1Change(event)} /></label><br/>
-					<label>V<sub>f  </sub>
-					<input type="number" className="values" value={V2} onChange={event => this.onV2Change(event)} /></label>
-				</div>
-				
-				<div className="prompts"> Initial and final pressure (atm): <br/>
-					<div> P<sub>i</sub> = {(Mol*0.08206*T1/V1).toPrecision(6)}<br/>
-					P<sub>f</sub> = {(Mol*0.08206*T1/V2).toPrecision(6)}</div>
-				</div>
-				
-				<div className="responses">
-					The internal energy is:<br/>
-					&Delta;U= nC<sub>v</sub>&Delta;T  = {0.0} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The heat is:<br/>
-					q = -w = {(-Mol*R*T1*Math.log(V2/V1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The work is:<br/>
-					w = -nRT ln (V2/V1) = {(-Mol*R*T1*Math.log(V2/V1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The enthalpy is:<br/>
-					&Delta;H = {0.0} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The entropy is:<br/>
-					&Delta;S = -nR ln (V2/V1) = {(-Mol*R*Math.log(V2/V1)).toPrecision(6)} J/K.<br/><br/>
-				</div>
-				
-			</div>
-		);
-	}
+    const T1 = (T1State !== undefined) ? T1State : props.T1;
+    const V1 = (V1State !== undefined) ? V1State : props.V1;
+    const V2 = (V2State !== undefined) ? V2State : props.V2;
+    const Mol = (MolState !== undefined) ? MolState : props.Mol;
+    const Cv = (CvState !== undefined) ? CvState : props.Cv;
+    let Cp = parseFloat(Cv)+R;
 
+    return (
+            <div id="flex_box_1">
+            
+                <div className="section_heads"> Reversible, Isothermal Process
+                </div>
+            
+                <div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
+                    <label>n &nbsp; &nbsp;
+                    <input type="number" className="values" value={Mol} onChange={event => setMolState(event.target.value)} /> <sub>   </sub></label><br/>
+                    <label>C<sub>V  </sub>
+                    <input type="number" className="values" value={Cv} onChange={event => setCvState(event.target.value)}  /> J/mol/K</label>
+                </div>
+                
+                <div className="prompts"> Enter the temperature below (K): <br/>
+                    <label>T  
+                    <input type="number" className="values" value={T1} onChange={event => setT1State(event.target.value)} /></label><br/>
+                </div>
+                
+                <div className="prompts"> Enter initial and final volumes below (L): <br/>
+                    <label>V<sub>i  </sub>  
+                    <input type="number" className="values" value={V1} onChange={event => setV1State(event.target.value)} /></label><br/>
+                    <label>V<sub>f  </sub>
+                    <input type="number" className="values" value={V2} onChange={event => setV2State(event.target.value)} /></label>
+                </div>
+                
+                <div className="prompts"> Initial and final pressure (atm): <br/>
+                    <div> P<sub>i</sub> = {(Mol*0.08206*T1/V1).toPrecision(6)}<br/>
+                    P<sub>f</sub> = {(Mol*0.08206*T1/V2).toPrecision(6)}</div>
+                </div>
+                
+                <div className="responses">
+                    The internal energy is:<br/>
+                    &Delta;U= nC<sub>v</sub>&Delta;T  = {0.0} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The heat is:<br/>
+                    q = -w = {(Mol*R*T1*Math.log(V2/V1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The work is:<br/>
+                    w = -nRT ln (V2/V1) = {(-Mol*R*T1*Math.log(V2/V1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The enthalpy is:<br/>
+                    &Delta;H = {0.0} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The entropy is:<br/>
+                    &Delta;S = -nR ln (V2/V1) = {(-Mol*R*Math.log(V2/V1)).toPrecision(6)} J/K.<br/><br/>
+                </div>
+                
+            </div>
+    );
 }
 
 RevIso.defaultProps = {
@@ -474,149 +353,83 @@ document.getElementById("reviso_b").addEventListener("click", () => {
 
 // Adiabatic ====================================================================================================================================
 
-class Adiabatic extends React.Component {
-	constructor() {
-		super();
-		this.state = {};
-		this.onT1Change = this.onT1Change.bind(this);
-		this.onT2Change = this.onT2Change.bind(this);
-		this.onV1Change = this.onV1Change.bind(this);
-		this.onP1Change = this.onP1Change.bind(this);
-		this.onMolChange = this.onMolChange.bind(this);
-		this.onCvChange = this.onCvChange.bind(this);
-	}
-	
-	onT1Change(event) {
-		this.setState({
-			T1: event.target.value,
-		});
-	}
-	
-	onT2Change(event) {
-		this.setState({
-			T2: event.target.value,
-		});
-	}
-	
-	onV1Change(event) {
-		this.setState({
-			V1: event.target.value,
-		});
-	}
-	
-	onP1Change(event) {
-		this.setState({
-			P1: event.target.value,
-		});
-	}
-	
-	onMolChange(event) {
-		this.setState({
-			Mol: event.target.value,
-		});
-	}
+function Adiabatic(props) {
+    const [T1State, setT1State] = React.useState();
+    const [T2State, setT2State] = React.useState();
+    const [V1State, setV1State] = React.useState();
+    const [P1State, setP1State] = React.useState();
+    const [MolState, setMolState] = React.useState();
+    const [CvState, setCvState] = React.useState();
 
-	onCvChange(event) {
-		this.setState({
-			Cv: event.target.value,
-		});
-	}
-	
-	shouldComponentUpdate(newProps,newState) {
-		let all_updated_props = Object.keys(newState);
-		let temp_obj = new Object();
-		for (const property in newProps) {
-			if (all_updated_props.includes(property)){
-				//console.log(`new state: ${property}:${newState[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newState[property];
-				}
-			else {					
-				//console.log(`old state: ${property}:${newProps[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newProps[property];
-				}
-		};
-		console.log(temp_obj);
-		return true;
-	}
-	
-	componentDidMount() {
-		console.log("something");
-	}
+    const T1 = (T1State !== undefined) ? T1State : props.T1;
+    const T2 = (T2State !== undefined) ? T2State : props.T2;
+    const V1 = (V1State !== undefined) ? V1State : props.V1;
+    const P1 = (P1State !== undefined) ? P1State : props.P1;
+    const Mol = (MolState !== undefined) ? MolState : props.Mol;
+    const Cv = (CvState !== undefined) ? CvState : props.Cv;
+    let Cp = parseFloat(Cv)+R;
+    let V2 = V1*Math.pow((T1/T2),(Cv/R));
+    let gamma = Cp/Cv;
 
-	render() {
-		const T1 = 'T1' in this.state ? this.state.T1 : this.props.T1;
-		const T2 = 'T2' in this.state ? this.state.T2 : this.props.T2;
-		const V1 = 'V1' in this.state ? this.state.V1 : this.props.V1;
-		const P1 = 'P1' in this.state ? this.state.P1 : this.props.P1;
-		const Mol = 'Mol' in this.state ? this.state.Mol : this.props.Mol;
-		const Cv = 'Cv' in this.state ? this.state.Cv : this.props.Cv;
-		let Cp = parseFloat(Cv)+R;
-		let V2 = V1*Math.pow((T1/T2),(Cv/R));
-		let gamma = Cp/Cv;
-		
-		return (
-			<div id="flex_box_1">
-			
-				<div className="section_heads"> Adiabatic Process
-				</div>
-			
-				<div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
-					<label>n &nbsp; &nbsp;
-					<input type="number" className="values" value={Mol} onChange={event => this.onMolChange(event)} /> <sub>   </sub></label><br/>
-					<label>C<sub>V  </sub>
-					<input type="number" className="values" value={Cv} onChange={event => this.onCvChange(event)}  /> J/mol/K</label>
-				</div>
-				
-				<div className="prompts"> Enter initial and final temperatures below (K): <br/>
-					<label>T<sub>i  </sub>  
-					<input type="number" className="values" value={T1} onChange={event => this.onT1Change(event)} /></label><br/>
-					<label>T<sub>f  </sub>
-					<input type="number" className="values" value={T2} onChange={event => this.onT2Change(event)} /></label>
-				</div>
-				
-				<div className="prompts"> Enter initial volume below (L): <br/>
-					<label>V<sub>i  </sub>  
-					<input type="number" className="values" value={V1} onChange={event => this.onV1Change(event)} /></label><br/>
-					<div> V<sub>f</sub> = {(V2).toPrecision(6)}</div>
-				</div>
-				
-				<div className="prompts"> Enter initial pressure below (atm): <br/>
-					<label>P<sub>i  </sub>  
-					<input type="number" className="values" value={P1} onChange={event => this.onP1Change(event)} /></label><br/>
-					<div> P<sub>f</sub> = {(P1*Math.pow((V1/V2),(gamma))).toPrecision(6)}</div>
-				</div>
-				
-				<div className="responses">
-					The internal energy is:<br/>
-					&Delta;U= nC<sub>v</sub>&Delta;T  = {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The heat is:<br/>
-					q = {(0.0).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The work is:<br/>
-					w = &Delta;U= {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The enthalpy is:<br/>
-					&Delta;H = &Delta;U+ nR&Delta;T = {(Mol*(Cp)*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The entropy is:<br/>
-					&Delta;S = &delta;q/T = {(Mol*0.0).toPrecision(6)} J/K.<br/><br/>
-				</div>
-				
-			</div>
-		);
-	}
-
+    return (
+            <div id="flex_box_1">
+            
+                <div className="section_heads"> Adiabatic Process
+                </div>
+            
+                <div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
+                    <label>n &nbsp; &nbsp;
+                    <input type="number" className="values" value={Mol} onChange={event => setMolState(event.target.value)} /> <sub>   </sub></label><br/>
+                    <label>C<sub>V  </sub>
+                    <input type="number" className="values" value={Cv} onChange={event => setCvState(event.target.value)}  /> J/mol/K</label>
+                </div>
+                
+                <div className="prompts"> Enter initial and final temperatures below (K): <br/>
+                    <label>T<sub>i  </sub>  
+                    <input type="number" className="values" value={T1} onChange={event => setT1State(event.target.value)} /></label><br/>
+                    <label>T<sub>f  </sub>
+                    <input type="number" className="values" value={T2} onChange={event => setT2State(event.target.value)} /></label>
+                </div>
+                
+                <div className="prompts"> Enter initial volume below (L): <br/>
+                    <label>V<sub>i  </sub>  
+                    <input type="number" className="values" value={V1} onChange={event => setV1State(event.target.value)} /></label><br/>
+                    <div> V<sub>f</sub> = {(V2).toPrecision(6)}</div>
+                </div>
+                
+                <div className="prompts"> Enter initial pressure below (atm): <br/>
+                    <label>P<sub>i  </sub>  
+                    <input type="number" className="values" value={P1} onChange={event => setP1State(event.target.value)} /></label><br/>
+                    <div> P<sub>f</sub> = {(P1*Math.pow((V1/V2),(gamma))).toPrecision(6)}</div>
+                </div>
+                
+                <div className="responses">
+                    The internal energy is:<br/>
+                    &Delta;U= nC<sub>v</sub>&Delta;T  = {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The heat is:<br/>
+                    q = {(0.0).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The work is:<br/>
+                    w = &Delta;U= {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The enthalpy is:<br/>
+                    &Delta;H = &Delta;U+ nR&Delta;T = {(Mol*(Cp)*(T2-T1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The entropy is:<br/>
+                    &Delta;S = &delta;q/T = {(Mol*0.0).toPrecision(6)} J/K.<br/><br/>
+                </div>
+                
+            </div>
+    );
 }
 
 Adiabatic.defaultProps = {
@@ -640,137 +453,77 @@ document.getElementById("adiabatic_b").addEventListener("click", () => {
 // Constant volume ==============================================================================================================================
 
 
-class ConstV extends React.Component {
-	constructor() {
-		super();
-		this.state = {};
-		this.onT1Change = this.onT1Change.bind(this);
-		this.onT2Change = this.onT2Change.bind(this);
-		this.onV1Change = this.onV1Change.bind(this);
-		this.onMolChange = this.onMolChange.bind(this);
-		this.onCvChange = this.onCvChange.bind(this);
-	}
-	
-	onT1Change(event) {
-		this.setState({
-			T1: event.target.value,
-		});
-	}
-	
-	onT2Change(event) {
-		this.setState({
-			T2: event.target.value,
-		});
-	}
-	
-	onV1Change(event) {
-		this.setState({
-			V1: event.target.value,
-		});
-	}
-	
-	onMolChange(event) {
-		this.setState({
-			Mol: event.target.value,
-		});
-	}
-	
-	onCvChange(event) {
-		this.setState({
-			Cv: event.target.value,
-		});
-	}
+function ConstV(props) {
+    const [T1State, setT1State] = React.useState();
+    const [T2State, setT2State] = React.useState();
+    const [V1State, setV1State] = React.useState();
+    const [MolState, setMolState] = React.useState();
+    const [CvState, setCvState] = React.useState();
 
-	shouldComponentUpdate(newProps,newState) {
-		let all_updated_props = Object.keys(newState);
-		let temp_obj = new Object();
-		for (const property in newProps) {
-			if (all_updated_props.includes(property)){
-				//console.log(`new state: ${property}:${newState[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newState[property];
-				}
-			else {					
-				//console.log(`old state: ${property}:${newProps[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newProps[property];
-				}
-		};
-		console.log(temp_obj);
-		return true;
-	}
-	
-	componentDidMount() {
-		console.log("something");
-	}
+    const T1 = (T1State !== undefined) ? T1State : props.T1;
+    const T2 = (T2State !== undefined) ? T2State : props.T2;
+    const V1 = (V1State !== undefined) ? V1State : props.V1;
+    const Mol = (MolState !== undefined) ? MolState : props.Mol;
+    const Cv = (CvState !== undefined) ? CvState : props.Cv;
+    let Cp = parseFloat(Cv)+R;
 
-	render() {
-		const T1 = 'T1' in this.state ? this.state.T1 : this.props.T1;
-		const T2 = 'T2' in this.state ? this.state.T2 : this.props.T2;
-		const V1 = 'V1' in this.state ? this.state.V1 : this.props.V1;
-		const Mol = 'Mol' in this.state ? this.state.Mol : this.props.Mol;
-		const Cv = 'Cv' in this.state ? this.state.Cv : this.props.Cv;
-		let Cp = parseFloat(Cv)+R;
-		
-		return (
-			<div id="flex_box_1">
-			
-				<div className="section_heads"> Constant Volume Process
-				</div>
-			
-				<div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
-					<label>n &nbsp; &nbsp;
-					<input type="number" className="values" value={Mol} onChange={event => this.onMolChange(event)} /> <sub>   </sub></label><br/>
-					<label>C<sub>V  </sub>
-					<input type="number" className="values" value={Cv} onChange={event => this.onCvChange(event)}  /> J/mol/K</label>
-				</div>
-				
-				<div className="prompts"> Enter initial and final temperatures below (K): <br/>
-					<label>T<sub>i  </sub>  
-					<input type="number" className="values" value={T1} onChange={event => this.onT1Change(event)} /></label><br/>
-					<label>T<sub>f  </sub>
-					<input type="number" className="values" value={T2} onChange={event => this.onT2Change(event)} /></label>
-				</div>
-				
-				<div className="prompts"> Enter volume below (L): <br/>
-					<label>V<sub>i  </sub>  
-					<input type="number" className="values" value={V1} onChange={event => this.onV1Change(event)} /></label><br/>
-				</div>
-				
-				<div className="prompts"> Initial and final pressure (atm): <br/>
-					<div> P<sub>i</sub> = {(Mol*0.08206*T1/V1).toPrecision(6)}<br/>
-					P<sub>f</sub> = {(Mol*0.08206*T2/V1).toPrecision(6)}</div>
-				</div>
-				
-				<div className="responses">
-					The internal energy is:<br/>
-					&Delta;U= nC<sub>v</sub>&Delta;T  = {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The heat is:<br/>
-					q = &Delta;U= {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The work is:<br/>
-					w = {(0.0).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The enthalpy is:<br/>
-					&Delta;H = &Delta;U+ nR&Delta;T = {(Mol*(Cp)*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The entropy is:<br/>
-					&Delta;S = nC<sub>V</sub> ln(T2/T1) = {(Mol*Cv*Math.log(T2/T1)).toPrecision(6)} J/K.<br/><br/>
-				</div>
-				
-			</div>
-		);
-	}
-
+    return (
+            <div id="flex_box_1">
+            
+                <div className="section_heads"> Constant Volume Process
+                </div>
+            
+                <div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
+                    <label>n &nbsp; &nbsp;
+                    <input type="number" className="values" value={Mol} onChange={event => setMolState(event.target.value)} /> <sub>   </sub></label><br/>
+                    <label>C<sub>V  </sub>
+                    <input type="number" className="values" value={Cv} onChange={event => setCvState(event.target.value)}  /> J/mol/K</label>
+                </div>
+                
+                <div className="prompts"> Enter initial and final temperatures below (K): <br/>
+                    <label>T<sub>i  </sub>  
+                    <input type="number" className="values" value={T1} onChange={event => setT1State(event.target.value)} /></label><br/>
+                    <label>T<sub>f  </sub>
+                    <input type="number" className="values" value={T2} onChange={event => setT2State(event.target.value)} /></label>
+                </div>
+                
+                <div className="prompts"> Enter volume below (L): <br/>
+                    <label>V<sub>i  </sub>  
+                    <input type="number" className="values" value={V1} onChange={event => setV1State(event.target.value)} /></label><br/>
+                </div>
+                
+                <div className="prompts"> Initial and final pressure (atm): <br/>
+                    <div> P<sub>i</sub> = {(Mol*0.08206*T1/V1).toPrecision(6)}<br/>
+                    P<sub>f</sub> = {(Mol*0.08206*T2/V1).toPrecision(6)}</div>
+                </div>
+                
+                <div className="responses">
+                    The internal energy is:<br/>
+                    &Delta;U= nC<sub>v</sub>&Delta;T  = {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The heat is:<br/>
+                    q = &Delta;U= {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The work is:<br/>
+                    w = {(0.0).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The enthalpy is:<br/>
+                    &Delta;H = &Delta;U+ nR&Delta;T = {(Mol*(Cp)*(T2-T1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The entropy is:<br/>
+                    &Delta;S = nC<sub>V</sub> ln(T2/T1) = {(Mol*Cv*Math.log(T2/T1)).toPrecision(6)} J/K.<br/><br/>
+                </div>
+                
+            </div>
+    );
 }
 
 ConstV.defaultProps = {
@@ -792,154 +545,81 @@ document.getElementById("constv_b").addEventListener("click", () => {
 
 // Constant external pressure ===================================================================================================================
 
-class ConstEP extends React.Component {
-	constructor() {
-		super();
-		this.state = {};
-		this.onT1Change = this.onT1Change.bind(this);
-		this.onT2Change = this.onT2Change.bind(this);
-		this.onV1Change = this.onV1Change.bind(this);
-		this.onV2Change = this.onV2Change.bind(this);
-		this.onP1Change = this.onP1Change.bind(this);
-		this.onMolChange = this.onMolChange.bind(this);
-		this.onCvChange = this.onCvChange.bind(this);
-	}
-	
-	onT1Change(event) {
-		this.setState({
-			T1: event.target.value,
-		});
-	}
-	
-	onT2Change(event) {
-		this.setState({
-			T2: event.target.value,
-		});
-	}
-	
-	onV1Change(event) {
-		this.setState({
-			V1: event.target.value,
-		});
-	}
-	
-	onV2Change(event) {
-		this.setState({
-			V2: event.target.value,
-		});
-	}
-	
-	onP1Change(event) {
-		this.setState({
-			P1: event.target.value,
-		});
-	}
-	
-	onMolChange(event) {
-		this.setState({
-			Mol: event.target.value,
-		});
-	}
-	
-	onCvChange(event) {
-		this.setState({
-			Cv: event.target.value,
-		});
-	}
-	
-	
-	shouldComponentUpdate(newProps,newState) {
-		let all_updated_props = Object.keys(newState);
-		let temp_obj = new Object();
-		for (const property in newProps) {
-			if (all_updated_props.includes(property)){
-				//console.log(`new state: ${property}:${newState[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newState[property];
-				}
-			else {					
-				//console.log(`old state: ${property}:${newProps[property]}`);
-				let temp_prop = property;
-				temp_obj[temp_prop] = newProps[property];
-				}
-		};
-		console.log(temp_obj);
-		return true;
-	}
-	
-	componentDidMount() {
-		console.log("something");
-	}
+function ConstEP(props) {
+    const [T1State, setT1State] = React.useState();
+    const [T2State, setT2State] = React.useState();
+    const [V1State, setV1State] = React.useState();
+    const [V2State, setV2State] = React.useState();
+    const [P1State, setP1State] = React.useState();
+    const [MolState, setMolState] = React.useState();
+    const [CvState, setCvState] = React.useState();
 
-	render() {
-		const T1 = 'T1' in this.state ? this.state.T1 : this.props.T1;
-		const T2 = 'T2' in this.state ? this.state.T2 : this.props.T2;
-		const V1 = 'V1' in this.state ? this.state.V1 : this.props.V1;
-		const V2 = 'V2' in this.state ? this.state.V2 : this.props.V2;
-		const P1 = 'P1' in this.state ? this.state.P1 : this.props.P1;
-		const Mol = 'Mol' in this.state ? this.state.Mol : this.props.Mol;
-		const Cv = 'Cv' in this.state ? this.state.Cv : this.props.Cv;
-		let Cp = parseFloat(Cv)+R;
-		
-		return (
-			<div id="flex_box_1">
-			
-				<div className="section_heads"> Constant External Pressure Process
-				</div>
-				<div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
-					<label>n &nbsp; &nbsp;
-					<input type="number" className="values" value={Mol} onChange={event => this.onMolChange(event)} /> <sub>   </sub></label><br/>
-					<label>C<sub>V  </sub>
-					<input type="number" className="values" value={Cv} onChange={event => this.onCvChange(event)}  /> J/mol/K</label>
-				</div>
-				
-				<div className="prompts"> Enter initial and final temperatures below (K): <br/>
-					<label>T<sub>i  </sub>  
-					<input type="number" className="values" value={T1} onChange={event => this.onT1Change(event)} /></label><br/>
-					<label>T<sub>f  </sub>
-					<input type="number" className="values" value={T2} onChange={event => this.onT2Change(event)} /></label>
-				</div>
-				
-				<div className="prompts"> Enter initial and final volumes below (L): <br/>
-					<label>V<sub>i  </sub>  
-					<input type="number" className="values" value={V1} onChange={event => this.onV1Change(event)} /></label><br/>
-					<label>V<sub>f  </sub>
-					<input type="number" className="values" value={V2} onChange={event => this.onV2Change(event)} /></label>
-				</div>
-				
-				<div className="prompts"> Enter the external pressure below (atm): <br/>
-					<label>P<sub>i  </sub>  
-					<input type="number" className="values" value={P1} onChange={event => this.onP1Change(event)} /></label><br/>
-				</div>
-				
-				<div className="responses">
-					The internal energy is:<br/>
-					&Delta;U= nC<sub>v</sub>&Delta;T  = {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The heat is:<br/>
-					q = &Delta;U - w = {((Mol*Cv*(T2-T1))+(P1*(V2-V1))*101.32).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The work is:<br/>
-					w = -P<sub>ext</sub>&Delta;V = {(-(P1*(V2-V1))*101.32).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The enthalpy is:<br/>
-					&Delta;H = nC<sub>P</sub>&Delta;T = {(Mol*(Cp)*(T2-T1)).toPrecision(6)} J.<br/><br/>
-				</div>
-				
-				<div className="responses">
-					The entropy requires more information to calculate.
-				</div>
-				
-			</div>
-		);
-	}
+    const T1 = (T1State !== undefined) ? T1State : props.T1;
+    const T2 = (T2State !== undefined) ? T2State : props.T2;
+    const V1 = (V1State !== undefined) ? V1State : props.V1;
+    const V2 = (V2State !== undefined) ? V2State : props.V2;
+    const P1 = (P1State !== undefined) ? P1State : props.P1;
+    const Mol = (MolState !== undefined) ? MolState : props.Mol;
+    const Cv = (CvState !== undefined) ? CvState : props.Cv;
+    let Cp = parseFloat(Cv)+R;
 
+    return (
+            <div id="flex_box_1">
+            
+                <div className="section_heads"> Constant External Pressure Process
+                </div>
+                <div className="prompts_ue"> Enter the moles and C<sub>V</sub> below: <br/>
+                    <label>n &nbsp; &nbsp;
+                    <input type="number" className="values" value={Mol} onChange={event => setMolState(event.target.value)} /> <sub>   </sub></label><br/>
+                    <label>C<sub>V  </sub>
+                    <input type="number" className="values" value={Cv} onChange={event => setCvState(event.target.value)}  /> J/mol/K</label>
+                </div>
+                
+                <div className="prompts"> Enter initial and final temperatures below (K): <br/>
+                    <label>T<sub>i  </sub>  
+                    <input type="number" className="values" value={T1} onChange={event => setT1State(event.target.value)} /></label><br/>
+                    <label>T<sub>f  </sub>
+                    <input type="number" className="values" value={T2} onChange={event => setT2State(event.target.value)} /></label>
+                </div>
+                
+                <div className="prompts"> Enter initial and final volumes below (L): <br/>
+                    <label>V<sub>i  </sub>  
+                    <input type="number" className="values" value={V1} onChange={event => setV1State(event.target.value)} /></label><br/>
+                    <label>V<sub>f  </sub>
+                    <input type="number" className="values" value={V2} onChange={event => setV2State(event.target.value)} /></label>
+                </div>
+                
+                <div className="prompts"> Enter the external pressure below (atm): <br/>
+                    <label>P<sub>i  </sub>  
+                    <input type="number" className="values" value={P1} onChange={event => setP1State(event.target.value)} /></label><br/>
+                </div>
+                
+                <div className="responses">
+                    The internal energy is:<br/>
+                    &Delta;U= nC<sub>v</sub>&Delta;T  = {(Mol*Cv*(T2-T1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The heat is:<br/>
+                    q = &Delta;U - w = {((Mol*Cv*(T2-T1))+(P1*(V2-V1))*101.32).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The work is:<br/>
+                    w = -P<sub>ext</sub>&Delta;V = {(-(P1*(V2-V1))*101.32).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The enthalpy is:<br/>
+                    &Delta;H = nC<sub>P</sub>&Delta;T = {(Mol*(Cp)*(T2-T1)).toPrecision(6)} J.<br/><br/>
+                </div>
+                
+                <div className="responses">
+                    The entropy requires more information to calculate.
+                </div>
+                
+            </div>
+    );
 }
 
 ConstEP.defaultProps = {
@@ -967,6 +647,129 @@ ReactDOM.render(
 	<ConstP />,
 	document.getElementById("main_flex")
 );
+
+// ------------------------------
+// Lightweight console test suite
+// ------------------------------
+
+function approxEqual(a, b, relTol = 1e-6, absTol = 1e-9) {
+	if (!isFinite(a) || !isFinite(b)) return false;
+	const diff = Math.abs(a - b);
+	return diff <= Math.max(relTol * Math.max(Math.abs(a), Math.abs(b)), absTol);
+}
+
+// Mirror UI formulas for consistency checks
+const ThermoFormulas = {
+	ConstP: (n, Cv, T1, T2, P) => {
+		const Cp = parseFloat(Cv) + R;
+		return {
+			U: n*Cv*(T2-T1),
+			H: n*Cp*(T2-T1),
+			w: -(n*R*(T2-T1)),
+			q: n*Cp*(T2-T1),
+			S: n*Cp*Math.log(T2-T1),
+			Vi: n*0.08206*T1/P,
+			Vf: n*0.08206*T2/P
+		};
+	},
+	RevIso: (n, Cv, T, V1, V2) => {
+		return {
+			U: 0.0,
+			H: 0.0,
+			w: -n*R*T*Math.log(V2/V1),
+			q: n*R*T*Math.log(V2/V1),
+			S: -n*R*Math.log(V2/V1),
+			Pi: n*0.08206*T/V1,
+			Pf: n*0.08206*T/V2
+		};
+	},
+	Adiabatic: (n, Cv, T1, T2, V1, P1) => {
+		const Cp = parseFloat(Cv) + R;
+		const V2 = V1*Math.pow((T1/T2),(Cv/R));
+		const gamma = Cp/Cv;
+		return {
+			U: n*Cv*(T2-T1),
+			q: 0.0,
+			w: n*Cv*(T2-T1),
+			H: n*Cp*(T2-T1),
+			S: 0.0,
+			V2: V2,
+			Pf: P1*Math.pow((V1/V2),gamma)
+		};
+	},
+	ConstV: (n, Cv, T1, T2, V) => {
+		const Cp = parseFloat(Cv) + R;
+		return {
+			U: n*Cv*(T2-T1),
+			q: n*Cv*(T2-T1),
+			w: 0.0,
+			H: n*Cp*(T2-T1),
+			S: n*Cv*Math.log(T2/T1),
+			Pi: n*0.08206*T1/V,
+			Pf: n*0.08206*T2/V
+		};
+	},
+	ConstEP: (n, Cv, T1, T2, V1, V2, Pext) => {
+		const Cp = parseFloat(Cv) + R;
+		const w = (-(Pext*(V2-V1))*101.32);
+		return {
+			U: n*Cv*(T2-T1),
+			w: w,
+			q: (n*Cv*(T2-T1)) - w,
+			H: n*Cp*(T2-T1)
+		};
+	}
+};
+
+function runThermoTests() {
+	try {
+		const out = [];
+		const add = (name, pass, details) => out.push({ test: name, pass: !!pass, details: details || "" });
+		// Default props mirrors
+		const D = {
+			T1: 273.15, T2: 298.15, V1: 22.414, V2: 44.828, P1: 1.0, n: 1.0, Cv: 12.47169
+		};
+		// ConstP
+		{
+			const r = ThermoFormulas.ConstP(D.n, D.Cv, D.T1, D.T2, D.P1);
+			add("ConstP: q = ΔH = nCpΔT", approxEqual(r.q, r.H), `q=${r.q}, H=${r.H}`);
+			add("ConstP: w = ΔU - q", approxEqual(r.w, r.U - r.q), `w=${r.w}, U-q=${r.U - r.q}`);
+			add("ConstP: Vi,Vf ideal gas", approxEqual(r.Vi, D.n*0.08206*D.T1/D.P1) && approxEqual(r.Vf, D.n*0.08206*D.T2/D.P1));
+		}
+		// RevIso
+		{
+			const r = ThermoFormulas.RevIso(D.n, D.Cv, D.T1, D.V1, D.V2);
+			add("RevIso: ΔU=0", approxEqual(r.U, 0));
+			add("RevIso: q = -w", approxEqual(r.q, -r.w), `q=${r.q}, w=${r.w}`);
+			add("RevIso: Pi,Pf ideal gas", approxEqual(r.Pi, D.n*0.08206*D.T1/D.V1) && approxEqual(r.Pf, D.n*0.08206*D.T1/D.V2));
+		}
+		// Adiabatic
+		{
+			const r = ThermoFormulas.Adiabatic(D.n, D.Cv, D.T1, 172.074, D.V1, D.P1);
+			add("Adiabatic: q=0", approxEqual(r.q, 0));
+			add("Adiabatic: w = ΔU", approxEqual(r.w, r.U), `w=${r.w}, U=${r.U}`);
+		}
+		// ConstV
+		{
+			const r = ThermoFormulas.ConstV(D.n, D.Cv, D.T1, D.T2, D.V1);
+			add("ConstV: w=0", approxEqual(r.w, 0));
+			add("ConstV: q = ΔU", approxEqual(r.q, r.U), `q=${r.q}, U=${r.U}`);
+		}
+		// ConstEP
+		{
+			const r = ThermoFormulas.ConstEP(D.n, D.Cv, D.T1, D.T2, 22.4147, 24.4661, D.P1);
+			add("ConstEP: q = ΔU - w", approxEqual(r.q, r.U - r.w), `q=${r.q}, U-w=${r.U - r.w}`);
+		}
+		const passed = out.every(t => t.pass);
+		console.groupCollapsed(`Thermo tests (${passed ? "all passed" : "some failed"})`);
+		console.table(out);
+		console.groupEnd();
+	} catch (e) {
+		console.error("Thermo test suite error:", e);
+	}
+}
+
+setTimeout(runThermoTests, 0);
 
 
 
