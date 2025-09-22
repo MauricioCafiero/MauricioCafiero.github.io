@@ -6,36 +6,12 @@
 	<title>Neural Network for Datasets</title>
 	<script language="JavaScript" src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js"></script>
 	<script src="https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/RDKit_minimal.js"></script>
-	<style>
-		body {
-			color: White;
-			background-color: #26292B;
-			min-height: 100vh;
-			width: 95%;
-			font-size: 100%;}	
+	<link rel="stylesheet" href="common_styles.css">
+	<style>	
 		
-		#main_title {
-			border-radius: 25px;
-			display: flex;
-			flex-direction: row;
-			text-align: left;
-			margin: 0% 5% 2% 5%;
-			background-color: #5F7ADB;
-			width: 90%;}
 		
-		#menu_holder{
-			display: flex;
-			flex-direction: row;}
 			
-		.menu_box {
-			border-radius: 25px;
-			margin: 0% 2% 0% 2%;
-			text-align: center;
-			background-color: #DFFF00;
-			width: 30%;}
 			
-		#intro {
-			width: 95%;}
 
 		#main_flex {
 			display: flex;
@@ -51,31 +27,6 @@
 			flex-direction: column;
 			width: 100%;}
 		
-		.big_flex_divs {
-			width: 90%;
-			text-align: left;
-			display: flex;
-			flex-wrap: wrap;
-			flex-direction: row;
-			border-radius: 25px; 
-			border: 5px solid #FF00FF;
-			margin: 2% 2% 2% 2%;
-			padding: 2%;
-			text-align: left;
-			align-content: space-around;
-			justify-content: space-evenly;
-		}
-		
-		.flex_divs {
-			width: 40%;
-			text-align: left;
-			display: flex;
-			flex-direction: column;
-			border-radius: 25px; 
-			border: 5px solid #DFFF00;
-			margin: 2% 2% 2% 2%;
-			padding: 2%;
-			text-align: center; }
 		
 		#prediction_holder {
 			display: block;}
@@ -102,16 +53,8 @@
 		#rdkit_canvas{
 			background-color: white;}
 			
-		input::-webkit-outer-spin-button,
-		input::-webkit-inner-spin-button {
-  		-webkit-appearance: none;
-  		margin: 0;}
 
-		hr {color: white;}
 
-		input[type=number] {
-			text-align: center; 
-			-moz-appearance: textfield;}
 		
 		button {text-align: center;
 			width: 150px;

@@ -6,32 +6,11 @@
 	<title>Data Analysis for the Benzoic Acid/Caffeine practical.</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.2.1/math.js"></script>
 	<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>	
-	<style>
-		body {
-			color: White;
-			background-color: #26292B;
-			min-height: 100vh;
-			width: 95%;}	
+	<link rel="stylesheet" href="common_styles.css">
+	<style>	
 		
-		#main_title {
-			border-radius: 25px;
-			display: flex;
-			flex-direction: row;
-			text-align: left;
-			margin: 0% 5% 2% 5%;
-			background-color: #5F7ADB;
-			width: 90%;}
 		
-		#menu_holder{
-			display: flex;
-			flex-direction: row;}
 			
-		.menu_box {
-			border-radius: 25px;
-			margin: 0% 2% 0% 2%;
-			text-align: center;
-			background-color: #DFFF00;
-			width: 30%;}
 
 		#main {
 			display: grid;
@@ -44,11 +23,6 @@
 				"plot_box_ben230 plot_box_caf230"
 				"plot_box_ben270 plot_box_caf270";}
 				
-		#main_input {
-			grid-area: main_input;
-			vertical-align: middle;
-			outline: 1px solid #D3D3D3;
-			text-align: center;}	
 			
 		#points_storage {
 			display: grid;
@@ -114,13 +88,6 @@
 		.plot_box {
 			display: none;}
 		
-		input::-webkit-outer-spin-button,
-		input::-webkit-inner-spin-button {
-  		-webkit-appearance: none;
-  		margin: 0;}
-		input[type=number] {
-			text-align: center; 
-			-moz-appearance: textfield;}
 		
 		button {text-align: center;
 			width: 150px}

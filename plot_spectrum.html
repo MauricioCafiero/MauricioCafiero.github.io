@@ -5,47 +5,13 @@
 	<meta charset="utf-8">
 	<title>Plot spectrum.</title>
 	<script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-	<style>
-		body {
-			color: White;
-			background-color: #26292B;
-			min-height: 100vh;
-			width: 95%;}	
+	<link rel="stylesheet" href="common_styles.css">
+	<style>	
 		
-		#main_title {
-			border-radius: 25px;
-			display: flex;
-			flex-direction: row;
-			text-align: left;
-			margin: 0% 5% 2% 5%;
-			background-color: #5F7ADB;
-			width: 90%;}
 		
-		#menu_holder{
-			display: flex;
-			flex-direction: row;}
 			
-		.menu_box {
-			border-radius: 25px;
-			margin: 0% 2% 0% 2%;
-			text-align: center;
-			background-color: #DFFF00;
-			width: 30%;}
 
-		#main_grid {
-			display: grid;
-			grid-template-columns: 50% 50%;
-			grid-template-rows: auto auto;
-			grid-template-areas:
-				"box1 box2"
-				"box3 box4";}
-		#box1 {
-			grid-area: box1;
-			vertical-align: middle;
-			text-align: center;}		
 		
-		#intro {
-			width: 100%;}
 
 		#main_flex {
 			display: flex;
@@ -79,8 +45,6 @@
 		#plot_holder{
 			margin: auto;}
 
-		#mol_display_name {
-			margin: auto;}
 
 		#plot_canvas {
 			background-color: white;
@@ -109,19 +73,11 @@
 			align-content: space-around;
 			justify-content: space-evenly;}
 			
-		input::-webkit-outer-spin-button,
-		input::-webkit-inner-spin-button {
-  		-webkit-appearance: none;
-  		margin: 0;}
 
-		input[type=number] {
-			text-align: center; 
-			-moz-appearance: textfield;}
 		
 		button {text-align: center;
 			width: 200px;}
 
-		hr {color: white;}
 	</style>
 </head>
 

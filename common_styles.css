@@ -1,0 +1,170 @@
+body {
+    color: White;
+    background-color: #26292B;
+    min-height: 100vh;
+    width: 95%;
+    font-size: 100%
+}
+
+#intro {
+    width: 100%;
+}
+
+#main_title {
+    border-radius: 25px;
+    display: flex;
+    flex-direction: row;
+    text-align: left;
+    margin: 0% 5% 2% 5%;
+    background-color: #5F7ADB;
+    width: 90%;
+}
+
+#menu_holder {
+    display: flex;
+    flex-direction: row;
+}
+
+.menu_box {
+    border-radius: 25px;
+    margin: 0% 2% 0% 2%;
+    text-align: center;
+    background-color: #DFFF00;
+    width: 22%;
+}
+
+a:link {
+    color: #33ff96;
+}
+
+a:visited {
+    color: #DFFF00;
+}
+
+a:hover {
+    color: #33ff96;
+    transition: 2s ease;
+    transform: scale(1.05);
+}
+
+.prompts_18 {
+    width: 18%;
+    margin: 3% 0% 3% 0%;
+    border: 5px solid #5F7ADB;
+    text-align: center;
+    align-content: center;
+    padding: 3px;
+}
+
+.prompts_20 {
+    width: 20%;
+    margin: 3% 0% 3% 0%;
+    border: 5px solid #5F7ADB;
+    text-align: left;
+    align-content: center;
+}
+
+.values {
+    width: 50%;
+    height: 1rem;
+}
+
+.responses {
+    width: 18%;
+    margin: 3% 0% 3% 0%;
+    border: 5px solid #DFFF00;
+    text-align: center;
+    align-content: center;
+}
+
+.big_flex_divs {
+    width: 90%;
+    text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    border-radius: 25px;
+    border: 5px solid #FF00FF;
+    margin: 2% 2% 2% 2%;
+    padding: 2%;
+    align-content: space-around;
+	justify-content: space-evenly;
+}
+
+.flex_divs {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 25px; 
+    border: 5px solid #DFFF00;
+    margin: 2% 2% 2% 2%;
+    padding: 2%;
+    text-align: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    text-align: center; 
+    -moz-appearance: textfield;
+}
+
+#image_input {
+    margin: 2% 30% 2% 30%;
+}
+
+#main_input {
+    grid-area: main_input;
+    vertical-align: middle;
+    outline: 1px solid #D3D3D3;
+    text-align: center;
+}
+
+hr {
+    color: white;
+}
+
+#main_grid {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+        "box1 box2"
+        "box3 box4";
+}
+
+#box1 {
+    grid-area: box1;
+    vertical-align: middle;
+    text-align: center;
+}
+
+#mol_display_name {
+    margin: auto;
+}
+
+#capture_fake_button {
+    color: White;
+    background-color: #26292B;
+    text-align: center;
+}
+
+#canvas_img {
+    display: none;
+}
+
+#preview {
+    width: 300px;
+}
+
+#canvas_holder {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: space-around;
+    justify-content: space-evenly;
+}
