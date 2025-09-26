@@ -6,6 +6,7 @@
 	<title>Neural Network for Datasets</title>
 	<script language="JavaScript" src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js"></script>
 	<script src="https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/RDKit_minimal.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<link rel="stylesheet" href="common_styles.css">
 	<style>	
 		
@@ -380,9 +381,7 @@ var model;
 var width_option;
 var skip_option;
 
-var axis_length;
-var xlim;
-var y_lim;
+var chartInstance; // Chart.js instance
 
 var number_columns, number_points; 
 var column_titles = new Array;
@@ -608,7 +607,7 @@ function featurize(smiles_in){
 	});
 	
 	mol.delete();
-	mol = null;
+	//mol = null;
 	
 	return features;
 }
@@ -656,9 +655,14 @@ function clear_training() {
 	document.getElementById("answer_holder").innerHTML = "";
 	document.getElementById("r2_holder").innerHTML = "";
 	
-	plot_to_clear = document.getElementById("plot_holder1_plot")
-	c = plot_to_clear.getContext("2d");
-	c.clearRect(0, 0, c.canvas.width, c.canvas.height);
+	// Clear Chart.js instance
+	if (chartInstance) {
+		chartInstance.destroy();
+		chartInstance = null;
+	}
+	
+	// Clear the plot holder
+	document.getElementById("plot_holder1").innerHTML = "";
 }
 
 async function training_nn(x_arr,y_arr) {
@@ -764,9 +768,8 @@ async function training_nn(x_arr,y_arr) {
 	const r2t = calcR2(y_train,pred_arr);
 	const r2v = calcR2(y_val,predval_arr);
 
-	make_plot(y_arr,y_arr,"plot_holder1");
-	add_plot(y_train,pred_arr,"plot_holder1","#008B00");
-	add_plot(y_val,predval_arr,"plot_holder1","#2320b3");
+	// Create Chart.js scatter plot with all three datasets
+	createChart(y_arr, y_train, pred_arr, y_val, predval_arr);
 	
 	let accuracy_string = `R<sup>2</sup> training: ${r2t.toPrecision(4)}<br>R<sup>2</sup> validation: ${r2v.toPrecision(4)}`;
 	document.getElementById("r2_holder").insertAdjacentHTML("beforeend",accuracy_string);
@@ -810,83 +813,105 @@ async function save_model() {
 	await model.save(`localstorage://${model_string}`);
 	model_div.insertAdjacentHTML("beforeend",`${model_string} saved`);
 	
-	localStorage.setItem(`${model_string}_scalers`,JSON.stringify(max_vals));
-	localStorage.setItem(`${model_string}_trans`,JSON.stringify(use_ln));
-	localStorage.setItem(`${model_string}_y_name`,JSON.stringify(y_prop_name));
+	// Combine all model metadata into a single JSON object
+	let modelMetadata = {
+		scalers: max_vals,
+		trans: use_ln,
+		y_name: y_prop_name
+	};
+	
+	localStorage.setItem(`${model_string}_metadata`,JSON.stringify(modelMetadata));
 }
 
-function make_plot(x_arr,y_arr,plot_area) {
+function createChart(actual_values, train_actual, train_pred, val_actual, val_pred) {
 
-//Create a named canvas for plot. =========================================================================================
+//Create Chart.js scatter plot with all three datasets =================================================================
 
 	document.getElementById("plot_explainer").style.display = "block";
-	var no_points = x_arr.length
-	plot_name = plot_area+"_plot"
-	let dim_canvas = 250;
-	axis_length = dim_canvas/2.0;
-	document.getElementById(plot_area).innerHTML =
-	'<canvas id="'+plot_name+'" height= '+dim_canvas+' width='+dim_canvas+' style="border: 1px; background-color: white;"></canvas>';
-	let plot = document.querySelector("#"+plot_name);
-	c = plot.getContext("2d");
-	c.strokeStyle = "#00008B";
-	c.strokeRect(0,0,dim_canvas,dim_canvas);
-
-//Find x and y axis limits by setting each to 1.2 times the maximum x and y value. ========================================
-
-	let x_max = Math.max(...x_arr), y_max = Math.max(...y_arr)
-	let x_min = Math.min(...x_arr), y_min = Math.min(...y_arr)
-
-	if (Math.abs(x_max) > Math.abs(x_min)) { xlim = 1.2*Math.abs(x_max);
-	} else{ xlim = 1.2*Math.abs(x_min);}
-	if (Math.abs(y_max) > Math.abs(y_min)) { ylim = 1.2*Math.abs(y_max);
-	} else{ ylim = 1.2*Math.abs(y_min);}
-
-	xlim = Math.round(xlim*100)/100
-	ylim = Math.round(ylim*100)/100
-
-//Draw the x and y-axes ===================================================================================================
-
-	c.strokeStyle = "#000000";
-	c.beginPath();
-	c.moveTo(0,axis_length);
-	c.lineTo(dim_canvas, axis_length);
-	c.stroke();
-	c.beginPath();
-	c.moveTo(axis_length,0);
-	c.lineTo(axis_length,dim_canvas);
-	c.stroke();
-
-//Label x and y-axes and draw in original x/y datapoints in red. ==========================================================
-
-	c.font = "14px Arial";
-	c.fillText("x="+xlim,1.7*axis_length,1.1*axis_length);
-	c.fillText("y="+ylim,0.6*axis_length,0.1*axis_length);
-	c.fillStyle = "#DC143C";
-	for (let i = 0; i < no_points; i++){
-		xp = axis_length*x_arr[i]/xlim +axis_length;
-		yp = axis_length-(axis_length*y_arr[i]/ylim);
-		c.fillText("\u2022",xp,yp);}
-
-}	
-
-function add_plot(x_arr,y_arr,plot_area,colour_choice) {
-
-//Get canvas for plot ====================================================================================================
-
-	var no_points = x_arr.length
-	plot_name = plot_area+"_plot"
-	let plot = document.querySelector("#"+plot_name);
-	c = plot.getContext("2d");
-	c.fillStyle = colour_choice;
 	
-
-//Label x and y-axes and draw in predicted x/y datapoints in green. =======================================================
-
-	for (let i = 0; i < no_points; i++){
-		xp = axis_length*x_arr[i]/xlim +axis_length;
-		yp = axis_length-(axis_length*y_arr[i]/ylim);
-		c.fillText("\u2022",xp,yp);}
-
+	// Clear any existing chart
+	if (chartInstance) {
+		chartInstance.destroy();
+	}
+	
+	// Create canvas element
+	document.getElementById("plot_holder1").innerHTML = '<canvas id="chart_canvas" width="400" height="400"></canvas>';
+	
+	const ctx = document.getElementById('chart_canvas').getContext('2d');
+	
+	// Prepare data for Chart.js
+	const actualData = actual_values.map((value, index) => ({x: value, y: value}));
+	const trainData = train_actual.map((value, index) => ({x: value, y: train_pred[index]}));
+	const valData = val_actual.map((value, index) => ({x: value, y: val_pred[index]}));
+	
+	chartInstance = new Chart(ctx, {
+		type: 'scatter',
+		data: {
+			datasets: [
+				{
+					label: 'Actual Values',
+					data: actualData,
+					backgroundColor: '#DC143C',
+					borderColor: '#DC143C',
+					pointRadius: 4,
+					pointHoverRadius: 6
+				},
+				{
+					label: 'Training Predictions',
+					data: trainData,
+					backgroundColor: '#008B00',
+					borderColor: '#008B00',
+					pointRadius: 4,
+					pointHoverRadius: 6
+				},
+				{
+					label: 'Validation Predictions',
+					data: valData,
+					backgroundColor: '#2320b3',
+					borderColor: '#2320b3',
+					pointRadius: 4,
+					pointHoverRadius: 6
+				}
+			]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			scales: {
+				x: {
+					title: {
+						display: true,
+						text: 'Actual Values'
+					},
+					grid: {
+						color: 'rgba(0,0,0,0.1)'
+					}
+				},
+				y: {
+					title: {
+						display: true,
+						text: 'Predicted Values'
+					},
+					grid: {
+						color: 'rgba(0,0,0,0.1)'
+					}
+				}
+			},
+			plugins: {
+				legend: {
+					display: true,
+					position: 'top'
+				},
+				tooltip: {
+					callbacks: {
+						label: function(context) {
+							return context.dataset.label + ': (' + context.parsed.x.toFixed(4) + ', ' + context.parsed.y.toFixed(4) + ')';
+						}
+					}
+				}
+			}
+		}
+	});
 }	
 
 async function get_pred() {
@@ -899,7 +924,7 @@ async function get_pred() {
 	let pred_y = new Array(0);
 	let pred_scaled = new Array(1);
 	
-	temp_array = featurize(smiles_in);
+	temp_array = featurize(String(smiles_in));
 	temp_array.splice(39,1);
 	
 	for (let j = 0; j < temp_array.length; j++) {
@@ -925,7 +950,6 @@ async function get_pred() {
 	var output = document.getElementById("answer_holder");
 	
 	output.insertAdjacentHTML("beforeEnd",`<br>DNN prediction of ${y_prop_name} is ${pred_val.toPrecision(6)}`);
-	
 	y_pred.dispose();
 	t_tens.dispose();
 }

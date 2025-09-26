@@ -4,12 +4,10 @@
 <head>
 	<meta charset="utf-8">
 	<title>Linear Regression of user data.</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<link rel="stylesheet" href="common_styles.css">
 	<style>
-		
-		
-			
-			
+	
 		#points_storage {
 			display: grid
 			outline: 1px solid #D3D3D3;
@@ -43,11 +41,9 @@
 			grid-area: plot_holder;
 			justify-content: center;}
 		#plot_explainer{
-			display: grid;
 			display: block;
 			outline: 1px solid #D3D3D3;
-			grid-area: plot_explainer;
-			padding: 120px;}	
+			width: 40%;}	
 
 		
 		button {text-align: center;
@@ -65,8 +61,8 @@
 	</div>
 	<br>
 
-	<section id = "main">
-		<div id = "main_input"> This app allows you to enter a set of <em>xy</em> data points and calculate the slope and
+	<section id = "main" style="display: flex; flex-direction: row; width: 100%; flex-wrap: wrap; align-content: space-around; justify-content: space-evenly;">
+		<div id = "main_input" style="width: 90%;"> This app allows you to enter a set of <em>xy</em> data points and calculate the slope and
 			intercept of the bext-fit line. It will also calculate the "goodness of fit" via the coefficient of
 			determination, R<sup>2</sup>. <br><br>
 		
@@ -83,20 +79,22 @@
 			</p>
 			
 		</div>
-		<div id = "points_storage">
-			<p id = "x_col"> X <br>
+		<div id = "points_storage" style="width: 90%; display: flex; flex-direction: row; align-content: space-around; justify-content: space-evenly;">
+			<p id = "x_col" style="width: 40%; display: flex; flex-direction: column; align-content: space-around; justify-content: space-evenly;"> X <br>
 			</p>
-			<p id = "y_col"> Y <br>
+			<p id = "y_col" style="width:40%; display: flex; flex-direction: column; align-content: space-around; justify-content: space-evenly;"> Y <br>
 			</p>
 		</div>
-		<div id = "result_of_calc">
+		<div id = "result_of_calc" style="width: 90%;">
 		</div>
-		<div id = "plot_holder"> </div>
+		<div id = "plot_holder" style="width: 40%;"> </div>
 	</section>
 	<p>This is the work of Dr. Mauricio Cafiero and may be used widely though attribution is appreciated.</p>
 </body>
 
 <script>
+
+var chartInstance; // Chart.js instance
 
 function add_points() {
 	no_points = document.getElementById('points').valueAsNumber;
@@ -213,64 +211,86 @@ function regress() {
     	"The best-fit line is: <br><strong> y=" + m + " x +"+b+"</strong><br> \
 and the R<sup>2</sup> is "+R2+".";
 
-//Create a named canvas for plot of regression.============================================================================
+//Create Chart.js scatter plot with regression line ======================================================================
 
-	let dim_canvas = 300;
-	let axis_length = dim_canvas/2.0;
-	document.getElementById("plot_holder").innerHTML =
-	'<canvas id="plot" height= '+dim_canvas+' width='+dim_canvas+' style="border: 1px;"></canvas>';
-	let plot = document.querySelector("#plot");
-	c = plot.getContext("2d");
-	c.strokeStyle = "#00008B";
-	c.strokeRect(0,0,dim_canvas,dim_canvas);
-
-//Find x and y axis limits by setting each to 1.2 times the maximum x and y value. ========================================
-
-	let x_max = Math.max(...x_arr), y_max = Math.max(...y_arr)
-	let x_min = Math.min(...x_arr), y_min = Math.min(...y_arr)
-
-	if (Math.abs(x_max) > Math.abs(x_min)) { xlim = 1.2*Math.abs(x_max);
-	} else{ xlim = 1.2*Math.abs(x_min);}
-	if (Math.abs(y_max) > Math.abs(y_min)) { ylim = 1.2*Math.abs(y_max);
-	} else{ ylim = 1.2*Math.abs(y_min);}
-
-	xlim = Math.round(xlim*100)/100
-	ylim = Math.round(ylim*100)/100
-
-//Draw the best fit line from the first x/y_calculated datapoint to the last. Coordinates below are scaled according  =====
-//to maximum x and y values. 
+	// Clear any existing chart
+	if (chartInstance) {
+		chartInstance.destroy();
+	}
 	
-	let x1 = axis_length*x_arr[0]/xlim + axis_length
-	let x2 = axis_length*x_arr[no_points-1]/xlim + axis_length
-	let y1 = axis_length-(axis_length*y_calc[0]/ylim)
-	let y2 = axis_length-(axis_length*y_calc[no_points-1]/ylim)
- 
-	c.beginPath();
-	c.moveTo(x1,y1);
-	c.lineTo(x2,y2);
-	c.stroke();
-
-//Draw the x and y-axes ===================================================================================================
-
-	c.beginPath();
-	c.moveTo(0,axis_length);
-	c.lineTo(dim_canvas, axis_length);
-	c.stroke();
-	c.beginPath();
-	c.moveTo(axis_length,0);
-	c.lineTo(axis_length,dim_canvas);
-	c.stroke();
-
-//Label x and y-axes and draw in original x/y datapoints in red. ==========================================================
-
-	c.font = "14px Arial";
-	c.fillText("x="+xlim,1.7*axis_length,1.1*axis_length);
-	c.fillText("y="+ylim,0.6*axis_length,0.1*axis_length);
-	c.fillStyle = "#DC143C";
-	for (let i = 0; i < no_points; i++){
-		xp = axis_length*x_arr[i]/xlim +axis_length;
-		yp = axis_length-(axis_length*y_arr[i]/ylim);
-		c.fillText("\u2022",xp,yp);}
+	// Create canvas element
+	document.getElementById("plot_holder").innerHTML = '<canvas id="chart_canvas" width="300" height="300"></canvas>';
+	
+	const ctx = document.getElementById('chart_canvas').getContext('2d');
+	
+	// Prepare data for Chart.js
+	const scatterData = x_arr.map((value, index) => ({x: value, y: y_arr[index]}));
+	const lineData = x_arr.map((value, index) => ({x: value, y: y_calc[index]}));
+	
+	chartInstance = new Chart(ctx, {
+		type: 'scatter',
+		data: {
+			datasets: [
+				{
+					label: 'Data Points',
+					data: scatterData,
+					backgroundColor: '#DC143C',
+					borderColor: '#DC143C',
+					pointRadius: 6,
+					pointHoverRadius: 8,
+					showLine: false
+				},
+				{
+					label: 'Regression Line',
+					data: lineData,
+					backgroundColor: '#00008B',
+					borderColor: '#00008B',
+					pointRadius: 0,
+					pointHoverRadius: 0,
+					showLine: true,
+					tension: 0
+				}
+			]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			plugins: {
+				title: {
+					display: true,
+					text: 'Linear Regression Analysis'
+				},
+				legend: {
+					display: true,
+					position: 'top'
+				}
+			},
+			scales: {
+				x: {
+					title: {
+						display: true,
+						text: 'X Values'
+					},
+					grid: {
+						color: 'rgba(0,0,0,0.1)'
+					}
+				},
+				y: {
+					title: {
+						display: true,
+						text: 'Y Values'
+					},
+					grid: {
+						color: 'rgba(0,0,0,0.1)'
+					}
+				}
+			},
+			interaction: {
+				intersect: false,
+				mode: 'index'
+			}
+		}
+	});
 
 // Add a div explaining the plot ==========================================================================================
 

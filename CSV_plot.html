@@ -4,6 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>Basic CSV handing.</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<link rel="stylesheet" href="common_styles.css">
 	<style>	
 		
@@ -113,7 +114,8 @@ var column_titles = new Array;
 var smiles_array = new Array;
 var x_prop_name = new String();
 var y_prop_name = new String();
-var max_columns = 10
+var max_columns = 10;
+var chartInstance; // Chart.js instance
 
 
 function read_csv(){
@@ -280,68 +282,86 @@ function regress() {
     	"The best-fit line is: <strong> y=" + m + " x +"+b+"</strong> \
 and the R<sup>2</sup> is "+R2+".";
 
-//Create a named canvas for plot of regression.============================================================================
+//Create Chart.js scatter plot with regression line ======================================================================
 
-	let dim_canvas = 400;
-	let axis_length = dim_canvas/2.0;
-	document.getElementById("plot_holder").innerHTML =
-	'<canvas id="plot" height= '+dim_canvas+' width='+dim_canvas+' style="border: 1px;"></canvas>';
-	let plot = document.querySelector("#plot");
-	c = plot.getContext("2d");
-	c.strokeStyle = "#00008B";
-	c.strokeRect(0,0,dim_canvas,dim_canvas);
-
-//Find x and y axis limits by setting each to 1.2 times the maximum x and y value. ========================================
-
-	let x_max = Math.max(...x_arr), y_max = Math.max(...y_arr)
-	let x_min = Math.min(...x_arr), y_min = Math.min(...y_arr)
-
-	if (Math.abs(x_max) > Math.abs(x_min)) { xlim = 1.2*Math.abs(x_max);
-	} else{ xlim = 1.2*Math.abs(x_min);}
-	if (Math.abs(y_max) > Math.abs(y_min)) { ylim = 1.2*Math.abs(y_max);
-	} else{ ylim = 1.2*Math.abs(y_min);}
-
-	xlim = Math.round(xlim*100)/100
-	ylim = Math.round(ylim*100)/100
-
-//Draw the best fit line from the first x/y_calculated datapoint to the last. Coordinates below are scaled according  =====
-//to maximum x and y values. 
-
-	max_ind = x_arr.indexOf(x_max);
-	min_ind = x_arr.indexOf(x_min);
-
-	let x1 = axis_length*x_arr[min_ind]/xlim + axis_length
-	let x2 = axis_length*x_arr[max_ind]/xlim + axis_length
-	let y1 = axis_length-(axis_length*y_calc[min_ind]/ylim)
-	let y2 = axis_length-(axis_length*y_calc[max_ind]/ylim)
- 
-	c.beginPath();
-	c.moveTo(x1,y1);
-	c.lineTo(x2,y2);
-	c.stroke();
-
-//Draw the x and y-axes ===================================================================================================
-
-	c.strokeStyle = "#000000";
-	c.beginPath();
-	c.moveTo(0,axis_length);
-	c.lineTo(dim_canvas, axis_length);
-	c.stroke();
-	c.beginPath();
-	c.moveTo(axis_length,0);
-	c.lineTo(axis_length,dim_canvas);
-	c.stroke();
-
-//Label x and y-axes and draw in original x/y datapoints in red. ==========================================================
-
-	c.font = "14px Arial";
-	c.fillText("x="+xlim,1.7*axis_length,1.1*axis_length);
-	c.fillText("y="+ylim,0.6*axis_length,0.1*axis_length);
-	c.fillStyle = "#DC143C";
-	for (let i = 0; i < no_points; i++){
-		xp = axis_length*x_arr[i]/xlim +axis_length;
-		yp = axis_length-(axis_length*y_arr[i]/ylim);
-		c.fillText("\u2022",xp,yp);}
+	// Clear any existing chart
+	if (chartInstance) {
+		chartInstance.destroy();
+	}
+	
+	// Create canvas element
+	document.getElementById("plot_holder").innerHTML = '<canvas id="chart_canvas" width="400" height="400"></canvas>';
+	
+	const ctx = document.getElementById('chart_canvas').getContext('2d');
+	
+	// Prepare data for Chart.js
+	const scatterData = x_arr.map((value, index) => ({x: value, y: y_arr[index]}));
+	const lineData = x_arr.map((value, index) => ({x: value, y: y_calc[index]}));
+	
+	chartInstance = new Chart(ctx, {
+		type: 'scatter',
+		data: {
+			datasets: [
+				{
+					label: 'Data Points',
+					data: scatterData,
+					backgroundColor: '#DC143C',
+					borderColor: '#DC143C',
+					pointRadius: 6,
+					pointHoverRadius: 8,
+					showLine: false
+				},
+				{
+					label: 'Regression Line',
+					data: lineData,
+					backgroundColor: '#00008B',
+					borderColor: '#00008B',
+					pointRadius: 0,
+					pointHoverRadius: 0,
+					showLine: true,
+					tension: 0
+				}
+			]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			plugins: {
+				title: {
+					display: true,
+					text: 'Linear Regression Analysis'
+				},
+				legend: {
+					display: true,
+					position: 'top'
+				}
+			},
+			scales: {
+				x: {
+					title: {
+						display: true,
+						text: x_prop_name
+					},
+					grid: {
+						color: 'rgba(0,0,0,0.1)'
+					}
+				},
+				y: {
+					title: {
+						display: true,
+						text: y_prop_name
+					},
+					grid: {
+						color: 'rgba(0,0,0,0.1)'
+					}
+				}
+			},
+			interaction: {
+				intersect: false,
+				mode: 'index'
+			}
+		}
+	});
 
 // Add a div explaining the plot ==========================================================================================
 

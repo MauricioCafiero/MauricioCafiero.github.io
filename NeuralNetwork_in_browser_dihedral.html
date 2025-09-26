@@ -6,6 +6,7 @@
 	<title>Neural Network for Potential Energy Surface</title>
 	<script language="JavaScript" src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.7.0/dist/tf.min.js"></script>
 	<script language="JavaScript" src="potential_surfaces.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 	<link rel="stylesheet" href="common_styles.css">
 	<style>	
 		
@@ -283,9 +284,7 @@ var model;
 var width_option;
 var skip_option;
 
-var axis_length;
-var xlim;
-var y_lim;
+var chartInstance; // Chart.js instance
 
 var energy_e = document.getElementById("dihedral_angle");
 energy_e.addEventListener("change",get_energy);
@@ -315,7 +314,7 @@ const y_arr = y_raw.map(y => (y-scaler)*100);
 //const y_arr = y_raw.map(y => (y-scaler));
 //=========================================================================================================================
 
-make_plot(x_arr,y_arr,"plot_holder1")
+createChart(x_arr, y_arr, "plot_holder1", "Potential Energy Surface", "Dihedral Angle (degrees)", "Energy (Hartree)")
 
 {	
 	var output = document.getElementById("answer_holder");
@@ -397,11 +396,8 @@ function clear_training() {
 	
 	document.getElementById("answer_holder").innerHTML = "";
 	
-	plot_to_clear = document.getElementById("plot_holder1_plot")
-	c = plot_to_clear.getContext("2d");
-	c.clearRect(0, 0, c.canvas.width, c.canvas.height);
-
-	make_plot(x_arr,y_arr,"plot_holder1")
+	// Clear Chart.js instance and recreate with original data
+	createChart(x_arr, y_arr, "plot_holder1", "Potential Energy Surface", "Dihedral Angle (degrees)", "Energy (Hartree)")
 	
 	{
 	var output = document.getElementById("answer_holder");
@@ -493,7 +489,7 @@ async function training_nn(x_arr,y_arr) {
 
 	var pred_arr = y_pred.arraySync();
 
-	add_plot(x_arr,pred_arr,"plot_holder1")
+	addPredictionToChart(x_arr, pred_arr, "plot_holder1")
 
 	var energy_query =document.getElementById("prediction_holder");
 	energy_query.style.display = "block";
@@ -513,77 +509,151 @@ async function training_nn(x_arr,y_arr) {
 	x_tens.dispose();
 }
 
-function make_plot(x_arr,y_arr,plot_area) {
+function createChart(x_arr, y_arr, plot_area, title, xLabel, yLabel) {
 
-//Create a named canvas for plot. =========================================================================================
+//Create Chart.js line plot for potential energy surface =================================================================
 
-	var no_points = x_arr.length
-	plot_name = plot_area+"_plot"
-	let dim_canvas = 400;
-	axis_length = dim_canvas/2.0;
-	document.getElementById(plot_area).innerHTML =
-	'<canvas id="'+plot_name+'" height= '+dim_canvas+' width='+dim_canvas+' style="border: 1px; background-color: white;"></canvas>';
-	let plot = document.querySelector("#"+plot_name);
-	c = plot.getContext("2d");
-	c.strokeStyle = "#00008B";
-	c.strokeRect(0,0,dim_canvas,dim_canvas);
-
-//Find x and y axis limits by setting each to 1.2 times the maximum x and y value. ========================================
-
+	// Clear any existing chart
+	if (chartInstance) {
+		chartInstance.destroy();
+	}
+	
+	// Create canvas element
+	document.getElementById(plot_area).innerHTML = '<canvas id="chart_canvas" width="400" height="400"></canvas>';
+	
+	const ctx = document.getElementById('chart_canvas').getContext('2d');
+	
+	// Calculate axis limits using x_min, x_max, y_min, y_max with 1.2 padding
 	let x_max = Math.max(...x_arr), y_max = Math.max(...y_arr)
 	let x_min = Math.min(...x_arr), y_min = Math.min(...y_arr)
 
-	if (Math.abs(x_max) > Math.abs(x_min)) { xlim = 1.2*Math.abs(x_max);
-	} else{ xlim = 1.2*Math.abs(x_min);}
-	if (Math.abs(y_max) > Math.abs(y_min)) { ylim = 1.2*Math.abs(y_max);
-	} else{ ylim = 1.2*Math.abs(y_min);}
-
-	xlim = Math.round(xlim*100)/100
-	ylim = Math.round(ylim*100)/100
-
-//Draw the x and y-axes ===================================================================================================
-
-	c.strokeStyle = "#000000";
-	c.beginPath();
-	c.moveTo(0,axis_length);
-	c.lineTo(dim_canvas, axis_length);
-	c.stroke();
-	c.beginPath();
-	c.moveTo(axis_length,0);
-	c.lineTo(axis_length,dim_canvas);
-	c.stroke();
-
-//Label x and y-axes and draw in original x/y datapoints in red. ==========================================================
-
-	c.font = "14px Arial";
-	c.fillText("x="+xlim,1.7*axis_length,1.1*axis_length);
-	c.fillText("y="+ylim,0.6*axis_length,0.1*axis_length);
-	c.fillStyle = "#DC143C";
-	for (let i = 0; i < no_points; i++){
-		xp = axis_length*x_arr[i]/xlim +axis_length;
-		yp = axis_length-(axis_length*y_arr[i]/ylim);
-		c.fillText("\u2022",xp,yp);}
-
-}	
-
-function add_plot(x_arr,y_arr,plot_area) {
-
-//Get canvas for plot of regression.=======================================================================================
-
-	var no_points = x_arr.length
-	plot_name = plot_area+"_plot"
-	let plot = document.querySelector("#"+plot_name);
-	c = plot.getContext("2d");
-	c.fillStyle = "#008B00";
+	// Apply 1.2 padding to the actual min/max values
+	let x_range = x_max - x_min;
+	let y_range = y_max - y_min;
 	
+	let x_padding = x_range * 0.1; // 10% padding on each side = 20% total
+	let y_padding = y_range * 0.1;
+	
+	let x_axis_min = x_min - x_padding;
+	let x_axis_max = x_max + x_padding;
+	let y_axis_min = y_min - y_padding;
+	let y_axis_max = y_max + y_padding;
+	
+	// Round to 2 decimal places
+	x_axis_min = Math.round(x_axis_min * 100) / 100;
+	x_axis_max = Math.round(x_axis_max * 100) / 100;
+	y_axis_min = Math.round(y_axis_min * 100) / 100;
+	y_axis_max = Math.round(y_axis_max * 100) / 100;
+	
+	// Debug: log the data ranges
+	console.log('Data ranges:', {
+		x_min: x_min, x_max: x_max, x_axis_min: x_axis_min, x_axis_max: x_axis_max,
+		y_min: y_min, y_max: y_max, y_axis_min: y_axis_min, y_axis_max: y_axis_max,
+		data_length: x_arr.length
+	});
+	
+	// Prepare data for Chart.js - ensure data is properly formatted
+	let data = [];
+	
+	for (let i = 0; i < x_arr.length; i++) {
+		data.push({
+			x: parseFloat(x_arr[i]),
+			y: parseFloat(y_arr[i])
+		});
+	}
+	
+	chartInstance = new Chart(ctx, {
+		type: 'scatter',
+		data: {
+			datasets: [
+				{
+					label: 'Training Data',
+					data: data,
+					borderColor: '#DC143C',
+					backgroundColor: '#DC143C',
+					pointRadius: 4,
+					pointHoverRadius: 6,
+					showLine: true,
+					tension: 0.1
+				}
+			]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			plugins: {
+				title: {
+					display: true,
+					text: title
+				},
+				legend: {
+					display: true,
+					position: 'top'
+				}
+			},
+			scales: {
+				x: {
+					type: 'linear',
+					title: {
+						display: true,
+						text: xLabel
+					},
+					min: x_axis_min,
+					max: x_axis_max,
+					grid: {
+						color: 'rgba(0,0,0,0.1)'
+					},
+					ticks: {
+						stepSize: (x_axis_max - x_axis_min) / 10
+					}
+				},
+				y: {
+					type: 'linear',
+					title: {
+						display: true,
+						text: yLabel
+					},
+					min: y_axis_min,
+					max: y_axis_max,
+					grid: {
+						color: 'rgba(0,0,0,0.1)'
+					},
+					ticks: {
+						stepSize: (y_axis_max - y_axis_min) / 10
+					}
+				}
+			},
+			interaction: {
+				intersect: false,
+				mode: 'index'
+			}
+		}
+	});
+}
 
-//Label x and y-axes and draw in predicted x/y datapoints in green. =======================================================
+function addPredictionToChart(x_arr, pred_arr, plot_area) {
 
-	for (let i = 0; i < no_points; i++){
-		xp = axis_length*x_arr[i]/xlim +axis_length;
-		yp = axis_length-(axis_length*y_arr[i]/ylim);
-		c.fillText("\u2022",xp,yp);}
+//Add neural network predictions to existing chart =======================================================================
 
+	if (chartInstance) {
+		// Prepare prediction data
+		const predData = x_arr.map((value, index) => ({x: value, y: pred_arr[index]}));
+		
+		// Add new dataset to existing chart
+		chartInstance.data.datasets.push({
+			label: 'Neural Network Predictions',
+			data: predData,
+			borderColor: '#008B00',
+			backgroundColor: '#008B00',
+			pointRadius: 3,
+			pointHoverRadius: 5,
+			fill: false,
+			tension: 0.1
+		});
+		
+		// Update the chart
+		chartInstance.update();
+	}
 }	
 
 function get_energy() {

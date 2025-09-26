@@ -163,9 +163,11 @@ async function load_model() {
 	console.log(model);
 	model_div.insertAdjacentHTML("beforeend",`${model_string} loaded`);
 	
-	max_vals = JSON.parse(localStorage.getItem(`${model_string}_scalers`));
-	use_ln = JSON.parse(localStorage.getItem(`${model_string}_trans`));
-	y_prop_name = JSON.parse(localStorage.getItem(`${model_string}_y_name`));
+	// Load the combined model metadata from localStorage
+	let modelMetadata = JSON.parse(localStorage.getItem(`${model_string}_metadata`));
+	max_vals = modelMetadata.scalers;
+	use_ln = modelMetadata.trans;
+	y_prop_name = modelMetadata.y_name;
 }
 
 async function get_pred() {
