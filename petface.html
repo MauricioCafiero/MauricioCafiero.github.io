@@ -84,6 +84,21 @@
 			width: 300px;
 			background-color: #000000;
 			display: none;}
+
+		.upload_flex_div {
+			width: 90%;
+			text-align: center;
+			text-wrap: wrap;
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: column;
+			border-radius: 25px; 
+			border: 5px solid #FF00FF;
+			margin: 2% 2% 2% 2%;
+			padding: 2%;
+			align-content: space-around;
+			justify-content: space-evenly;
+		}
 		
 		#capture_div {
 			position: absolute;
@@ -126,13 +141,15 @@
 			
 			<label id="drop_box">
 				<div id="drop_div" style="margin: auto;"> Drag and drop your image of your pet here! </div>
-				or use this to find your file and upload, or to use your mobile camera:
-				<input type="file" id="image_input" accept="image/*"> <br>
-				or use this to capture an image with your device camera (desktop): <br>
-				<button id="capture_image_b" onclick="capture_image()">Capture image from camera.</button>
 			</label>
-			<br>
-			<button id="process_image_b" onclick="inception()" disabled>Look for that face!</button>
+			<div class="upload_flex_div">
+				<label>or use this to find your file and upload, or to use your <strong><big>mobile camera:</big></strong></label>
+				<input type="file" id="image_input" accept="image/*"> <br>
+			</div>
+			<div class="upload_flex_div">
+				<label>or use this to capture an image with your <strong><big>webcam (desktop):</big></strong></label>
+				<button id="capture_image_b" onclick="capture_image()">Capture image from camera.</button>
+			</div>
 			
 		</div>
 		
@@ -175,9 +192,8 @@ document.getElementById("drop_box").addEventListener('drop', event => {
 		text_over.innerHTML = "This is your image!";
 		const report = document.getElementById("report");
 		report.innerHTML = "";
-		
-		document.getElementById("process_image_b").disabled = false;
-		}});
+		inception();
+}});
 
 document.getElementById("drop_box").addEventListener('dragover', event => {
 	event.preventDefault();});
@@ -194,9 +210,8 @@ file_input.addEventListener('change', () => {
 	
 	const report = document.getElementById("report");
 	report.innerHTML = "";
-	
-	document.getElementById("process_image_b").disabled = false;
-	});
+	inception();
+});
 
 function show_dropped_image(file) {
 	const reader = new FileReader();
@@ -294,9 +309,7 @@ function capture() {
 	
 	const report = document.getElementById("report");
 	report.innerHTML = "";
-	
-	document.getElementById("process_image_b").disabled = false;
-	
+	inception();
 	stopStreamedVideo(preview);
 	
 	const overlay = document.getElementById("pet_face_box");
