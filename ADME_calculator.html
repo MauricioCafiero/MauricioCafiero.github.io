@@ -9,17 +9,16 @@
 
 	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/kekule/dist/themes/default/kekule.css" />
 	<script language="JavaScript" src="https://cdn.jsdelivr.net/npm/kekule/dist/kekule.min.js"></script>
+	<script type="module">
+		import { Client } from "https://cdn.jsdelivr.net/npm/@gradio/client@1.19.0/dist/index.min.js";
+		window.GradioClient = Client;
+	</script>
 	<script language="JavaScript" src="flavanoids_list.js"></script>
 
 	<script src="https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/RDKit_minimal.js"></script>
 	
 	<link rel="stylesheet" href="common_styles.css">
 	<style>
-			
-		
-			
-		
-
 		#main_flex, #new_mol_holder, #ed_mol_holder, #rand_mol_holder {
 			display: flex;
 			flex-direction: row;
@@ -149,27 +148,35 @@
 	<div id="new_mol_holder">
 		<label for="user_mol_smiles" style="margin: 0% 3%;">SMILES for user molecule:</label>
 		<input id="user_mol_smiles" type="text" style="width: 35%">
-		<button id="get_user_mol_b" onclick="get_user_mol()" style="width: 35%">
+		<button id="get_user_mol_b" onclick="get_user_mol()" style="width: 20%">
 			Choose user molecule for properties.</button>
 		<button id="user_mol_copy_b" onclick="copy_smiles('user_mol_smiles')" style="width: 10%">
 			Copy</button>
+		<button id="get_user_sdf_b" onclick="get_user_sdf()" style="width: 15%">
+			Get SDF</button>
 	</div><br>
 	<div id="ed_mol_holder">
 		<label for="new_mol_smiles" style="margin: 0% 3%;">SMILES for edited molecule:</label>
 		<input id="new_mol_smiles" type="text" style="width: 35%">
-		<button id="get_new_mol_b" onclick="get_new_mol()" style="width: 35%">
+		<button id="get_new_mol_b" onclick="get_new_mol()" style="width: 20%">
 			Choose edited molecule for properties.</button> 
 		<button id="ed_mol_copy_b" onclick="copy_smiles('new_mol_smiles')" style="width: 10%">
 			Copy</button>
+		<button id="get_edit_sdf_b" onclick="get_edit_sdf()" style="width: 15%">
+			Get SDF</button>
 	</div><br>
 	<div id="rand_mol_holder">
 		<label for="rand_mol_smiles" style="margin: 0% 3%;">SMILES for random molecule:</label>
 		<input id="rand_mol_smiles" type="text" style="width: 35%">
-		<button id="get_rand_mol_b" onclick="get_rand_mol()" style="width: 35%">
+		<button id="get_rand_mol_b" onclick="get_rand_mol()" style="width: 20%">
 			Choose random molecule for properties.</button> 
 		<button id="rand_mol_copy_b" onclick="copy_smiles('rand_mol_smiles')" style="width: 10%">
 			Copy</button>
+		<button id="get_random_sdf_b" onclick="get_random_sdf()" style="width: 15%">
+			Get SDF</button>
 	</div>
+	<hr>
+	<div id="call_sdf_b" onclick="call_sdf()">Call SDF</div>
 	<hr>
 	<div id = "composer_div">
 	</div>
@@ -381,8 +388,95 @@ function copy_smiles(which_smiles) {
 //  alert("Copied the text: " + copyText.value);
 }
 
+function downloadSDF(sdfData, filename) {
+	// Create a blob with the SDF data
+	const blob = new Blob([sdfData], { type: 'text/plain' });
+	
+	// Create a temporary URL for the blob
+	const url = window.URL.createObjectURL(blob);
+	
+	// Create a temporary anchor element and trigger download
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	
+	// Clean up
+	document.body.removeChild(a);
+	window.URL.revokeObjectURL(url);
+}
+
+async function get_user_sdf() {
+	var smiles_in = document.getElementById("user_mol_smiles").value;
+	console.log("get_user_sdf() called");
+	
+	try {
+		const client = await window.GradioClient.connect("cafierom/SmilesToSDF");
+		const result = await client.predict("/predict", { 		
+				smile: smiles_in, 
+		});
+		
+		// Download the SDF data as a file
+		if (result.data && result.data.length > 0) {
+			const sdfData = result.data[0];
+			downloadSDF(sdfData, "user_molecule.sdf");
+		} else {
+			alert("No SDF data received from the API");
+		}
+	} catch (error) {
+		console.error("Error calling Gradio API:", error);
+		alert("Error generating SDF: " + error.message);
+	}
+}
+
+async function get_edit_sdf() {
+	var smiles_in = document.getElementById("new_mol_smiles").value;
+	console.log("get_edit_sdf() called");
+	
+	try {
+		const client = await window.GradioClient.connect("cafierom/SmilesToSDF");
+		const result = await client.predict("/predict", { 		
+				smile: smiles_in, 
+		});
+		
+		// Download the SDF data as a file
+		if (result.data && result.data.length > 0) {
+			const sdfData = result.data[0];
+			downloadSDF(sdfData, "edited_molecule.sdf");
+		} else {
+			alert("No SDF data received from the API");
+		}
+	} catch (error) {
+		console.error("Error calling Gradio API:", error);
+		alert("Error generating SDF: " + error.message);
+	}
+}
+
+async function get_random_sdf() {
+	var smiles_in = document.getElementById("rand_mol_smiles").value;
+	console.log("get_random_sdf() called");
+	
+	try {
+		const client = await window.GradioClient.connect("cafierom/SmilesToSDF");
+		const result = await client.predict("/predict", { 		
+				smile: smiles_in, 
+		});
+		
+		// Download the SDF data as a file
+		if (result.data && result.data.length > 0) {
+			const sdfData = result.data[0];
+			downloadSDF(sdfData, "random_molecule.sdf");
+		} else {
+			alert("No SDF data received from the API");
+		}
+	} catch (error) {
+		console.error("Error calling Gradio API:", error);
+		alert("Error generating SDF: " + error.message);
+	}
+}
+
 </script>	
   
-
 
 </html>
