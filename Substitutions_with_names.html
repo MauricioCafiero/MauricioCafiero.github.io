@@ -7,11 +7,6 @@
 	<script src="https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/RDKit_minimal.js"></script>
 	<link rel="stylesheet" href="common_styles.css">
 	<style>
-
-		
-			
-		
-
 		.main_flex {
 			display: flex;
 			flex-direction: row;
@@ -20,6 +15,13 @@
 		.flex_div {
 			width: 50%;
 			text-align: left;
+			display: flex;
+			flex-direction: column;
+			align-content: center;}
+		
+		.flex_div_33 {
+			width: 33%;
+			text-align: center;
 			display: flex;
 			flex-direction: column;
 			align-content: center;}
@@ -58,7 +60,7 @@
 			border-color: #DFFF00; 
 			background-color: #5F7ADB;
 			width: 30%;
-			z-index=1;
+			z-index: 1;
 			border-radius: 25px;
 			height: 30%;
 			text-align: center;
@@ -81,11 +83,8 @@
 			width: 100%;
 			display: flex;
 			flex-direction: rows;
-			justify-content: space-around;}}
+			justify-content: space-around;}
 
-			
-
-		
 		button {text-align: center;}
 
 	</style>
@@ -230,11 +229,15 @@
 	</section>
 	<hr>
 	<section id="canvas_div" class = "main_flex">
-		<div class = "flex_div">
+		<div class = "flex_div_33">
 			<span id = "old_mol_display_name"></span>
 			<canvas id="old_rdkit_canvas" class = "rdkit_canvas"> </canvas>
 		</div>
-		<div class = "flex_div">
+		<div class="flex_div_33">
+			<div id="output_div">
+			</div>
+		</div>
+		<div class = "flex_div_33">
 			<span id = "new_mol_display_name"></span>
 			<canvas id="new_rdkit_canvas" class = "rdkit_canvas"> </canvas>
 		</div>
@@ -401,6 +404,12 @@ function display_molecule(smiles_in, which_canvas) {
 
 // draws the molecule in the canvas using RDKit ===========================================================================	
 
+	print_props = ["CrippenClogP","CrippenMR","exactmw","lipinskiHBA","lipinskiHBD","NumRotatableBonds","tpsa"];
+	name_props = ["log P","Molar Refractivity","Molecular Weight","# H-bond acceptors","# H-bond donors","# rotatable bonds","Polarizable surface area"]
+
+	const output_holder = document.getElementById("output_div");
+	output_holder.innerHTML = "";
+
 	window.initRDKitModule()
 		.then(function(RDKit) {
         	console.log("RDKit version: " + RDKit.version());
@@ -409,8 +418,28 @@ function display_molecule(smiles_in, which_canvas) {
 		const mol = RDKit.get_mol(smiles);
 		var canvas = document.getElementById(which_canvas);
 		mol.draw_to_canvas(canvas, -1, -1);
-		});
+		
+		var descriptors = JSON.parse(mol.get_descriptors());
+		descriptorsSorted = Object.keys(descriptors)
+			.sort(function(a,b) {return a.localeCompare(b, undefined, {sensitivity: 'base'});})
+    			.map(function(descriptor) {return [descriptor, descriptors[descriptor]]}) 
+  		var output = document.getElementById("output_div");
+		if (which_canvas == "old_rdkit_canvas") {
+			output.style.textAlign = "left";}
+		else {
+			output.style.textAlign = "right";}
 
+		output.innerHTML = "Properties:<hr>";
+		name_index = 0
+		descriptorsSorted.forEach(function(descriptor) {
+			if (print_props.indexOf(descriptor[0]) !== -1){
+				output.innerHTML += name_props[name_index]+" : "+descriptor[1] +"<br>";
+				name_index++}});
+		output.innerHTML += "<hr>";
+	})
+		.catch(() => {
+				console.log("Could not load RDKit!")
+		});
 }
 
 function* get_subbed_smiles() {
