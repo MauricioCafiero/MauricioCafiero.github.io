@@ -23,8 +23,7 @@
 
 		#flex_div2 {
 			max-width: 45%;
-			display: flex
-			flex-direction: row;
+			
 			justify-content: center;
 			padding: 2%;
 			margin: 5%}
@@ -40,11 +39,6 @@
 			border-radius: 25px;
 			border: 5px solid #5F7ADB;
 			padding: 5%;}
-			
-		
-			
-		
-			
 		
 		.rot_pics {
 			position: relative;
@@ -58,17 +52,18 @@
 		@media (prefers-reduced-motion: no-preference) {
 			.loop img {   
 				grid-area: 1/1;
-				animation: rotate calc(var(--time) * 4) linear 0s infinite;}
+				animation: rotate calc(var(--time) * 5) linear 0s infinite;}
    
-			.loop img:nth-child(2) { animation-delay: calc(var(--time) * -3); }
-			.loop img:nth-child(3) { animation-delay: calc(var(--time) * -2); }
-			.loop img:nth-child(4) { animation-delay: calc(var(--time) * -1); }}
+			.loop img:nth-child(2) { animation-delay: calc(var(--time) * -4); }
+			.loop img:nth-child(3) { animation-delay: calc(var(--time) * -3); }
+			.loop img:nth-child(4) { animation-delay: calc(var(--time) * -2); }
+			.loop img:nth-child(5) { animation-delay: calc(var(--time) * -1); }}
 
 		@keyframes rotate {
 			/* 25.00% is (100% / number of images) */
-			0%, 25.00% { opacity: 1; }
+			0%, 20.00% { opacity: 1; }
 			/* 25.01% is (100% / number of images) + 0.01 */
-			25.01%, 100% { opacity: 0; }}
+			20.01%, 100% { opacity: 0; }}
 
 		input[type=number] {
 			text-align: center; 
@@ -96,38 +91,50 @@
 	<section id = "main_flex">
 		<div id = "flex_div1">
 			<ul id="projects"> <h1>Current Projects</h1>
+				<li>The Fall 2025 semester saw our participation in two hackathons! For the LLMs in Chemistry and Materials Hackathon
+					we developed a novel docking code that uses he UMA MLIP to find poses and predict the binding affinity of a ligand to a protein and perform
+					dynamics on the best pose. See <a href="https://github.com/MauricioCafiero/UMADock">UMADock!</a><br><br>
+					For the Gradio/Huggingface MCP 1st birthday hackathon we created a MOdular DRug design AGent, MoDrAg! She can help with finding 
+					molecular properties, generating libraries of molecules, predicting IC50, and docking. 
+					See <a href="https://huggingface.co/spaces/cafierom/MoDrAg">MoDrAg!</a> <br><br>
+					You can also chat with an OpenAI model using MoDrAg's drug-design sub-agents. See 
+					<a href="https://huggingface.co/spaces/cafierom/ChatWithMoDrAg">MoDrAg_Chat!</a> <br><br>
+					We also taught a module on Python, Machine Learning, and AI for Chemistry, which included creating MLPs with Pytorch and
+					creating chatbots with Huggingface models. See the notebooks for the class and other materials at 
+					<a href="https://github.com/MauricioCafiero/CafChemTeach">CafChemTeach!</a>
+				</li><br>
 				<li>Our latest <a href="https://pubs.rsc.org/en/content/articlelanding/2025/cp/d5cp00692a">
 					work in PCCP</a> is the first to show how using a temperature ramp during molecule generation with a GPT 
-					(or any autoregressive model) can make better libraries of molecules.</li>
+					(or any autoregressive model) can make better libraries of molecules.</li><br>
 				<li>We've been making tools for computational chemistry using models like Meta's 
 					<a href="https://github.com/facebookresearch/fairchem"> UMA MLIP</a>, <a href="https://github.com/JacksonBurns/chemeleon">
 					Chemeleon</a> and <a href="https://github.com/jwohlwend/boltz">Boltz2</a>. Check out the 
 					<a href="https://github.com/MauricioCafiero/CafChem">CafChem tools for Python here</a>, or the
-					<a href="https://huggingface.co/cafierom">CafChem HuggingFace spaces/MCP tools here</a>!</li>
+					<a href="https://huggingface.co/cafierom">CafChem HuggingFace spaces/MCP tools here</a>!</li><br>
 				<li>We recently published a set of <a href="https://pubs.acs.org/doi/10.1021/acs.jpcb.4c08356">CCSD(T)/CBS benchmarks for biologically relevant catecholic systems</a>. These benchmarks
 					provide accurate information that can aid in drug design for Parkinson's Disease. We also evaluated 21 DFT methods 
-					and found the most accurate functionals for these systems.</li>
+					and found the most accurate functionals for these systems.</li><br>
 				<li>Designing generative, pre-trained (GPT) models to create virtual screening libraries for drug design. 
 					We have created transformer-based GPTs for creating libraries of molecules to inhibit HMG coenzyme A reductase
 					(anti-cholesterol drugs, <a href="https://pubs.acs.org/doi/10.1021/acs.jcim.4c01309">read the paper in 
 					Journal of Chemical Information and Modeling</a>), and are currently working 
-					on RNN and transformer-based GPTs for inhibiting the MAOB enzyme for possible action against Parkinon's Disease.</li>
+					on RNN and transformer-based GPTs for inhibiting the MAOB enzyme for possible action against Parkinon's Disease.</li><br>
 				<li>See our newest web-apps: upload any dataset with a SMILES column and a target column (values you want to predict) and train
 					a neural network to predict those target values! <a href="NeuralNetwork_for_Datasets.html">Neural netowrks for datasets!</a> Also, 
 					upload or randomly generate a basis set of gaussian orbitals or explicitly correlated gaussian geminals for small atoms and use 
-					stochastic optimization to find the ground state energy! <a href="buildABasisSet.html">Build a basis set!</a>
+					stochastic optimization to find the ground state energy! <a href="buildABasisSet.html">Build a basis set!</a></li><br>
 				<li>We recently published a paper on <a href="https://doi.org/10.1021/acs.jpcb.3c07456">three-body interactions in 
 					protein-ligand binding</a> (where the three bodies are the ligand and two amino-acid residues) and published a
 					second paper which examines <a href="https://pubs.acs.org/doi/10.1021/acs.jpca.4c03262">general three-body systems 
-					important to drug design</a> and evaluates many families of DFT methods for their accuracy.</li>
+					important to drug design</a> and evaluates many families of DFT methods for their accuracy.</li><br>
 				<li>Much of our work is in DFT-studies of protein-ligand binding, usually in the area of drug-design for  Parkinson's Disease.
 					<a href="https://doi.org/10.1021/acsomega.3c03888">This recent work </a>describes how paracetamol may have some action in
-					the relief of symptoms of Parkinson's Disease. 
+					the relief of symptoms of Parkinson's Disease. </li><br>
 				<li>We are developing the CafChem <a href="Chem_webapps_frontpage.html">Javascript-based WebApps </a> for teaching chemistry, 
 					including a introduction to machine-learning 
 					neural networks, where the user can train their own neural network to fit a potential energy surface. We also have apps for
 					visualizing liquid/solid surface interactions, predicting rovibrational spectra, drawing molecules and predicting their ADME
-					properties for drug design, and performing calculations for various chemistry practicals.
+					properties for drug design, and performing calculations for various chemistry practicals.</li>
 			</ul>
 		</div>
 		<div id = "flex_div2" class="loop">
@@ -135,7 +142,8 @@
 			<img src="images/docking_pic1.jpg" class="rot_pics" />
 			<img src="images/GPT_pic.jpg" class="rot_pics" />
 			<img src="images/docking_pic2.jpg" class="rot_pics"/>
-			<img src="images/active_site_pic.jpg" class="rot_pics" fetchpriority="high"/>
+			<img src="images/active_site_pic.jpg" class="rot_pics" />
+			<img src="images/modrag_final_ic50.jpg" class="rot_pics" fetchpriority="high" />
 			
 		</div>
 	</section>
