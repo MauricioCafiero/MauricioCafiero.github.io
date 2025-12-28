@@ -5,53 +5,62 @@
 	<meta charset="utf-8">
 	<title>Rovibrational Spectra of diatomic molecules.</title>
 	<link rel="stylesheet" href="common_styles.css">
-	<link rel="icon" type="image/png" href="images/cafchem_favicon.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="images/cafchem_favicon.png" sizes="16x16" />
 	<style>
 			
-		
-			
-		
 		#top_matter {
 			font-family: 'cambria math'; 
 			width: 95%;}
 
 		#main {
-			display: grid;
-			grid-template-columns: 575px 225px;
-			grid-template-rows: auto auto auto;
-			grid-template-areas:
-				"energy_level_diagram constants"
-				"line_buttons line_buttons"
-				"spectrum spectrum";}
+			display: flex;
+			flex-direction: column;
+			width: 800px;
+			margin: 0 auto;}
+
+		#main_row_1 {
+			display: flex;
+			flex-direction: row;
+			align-items: flex-start;}
 				
 		#energy_level_diagram {
-			grid-area: energy_level_diagram;
+			width: 575px;
+			flex-shrink: 0;
 			text-align: center;}	
 			
 		#constants {
-			display: grid;
-			grid-area: constants;
+			display: flex;
+			flex-direction: column;
+			width: 225px;
+			flex-shrink: 0;
 			text-align: left;}
 
 		#line_buttons {
-			display: grid;
-			grid-area: line_buttons;
-			text-align: left;}
+			display: flex;
+			flex-direction: row;
+			text-align: left;
+			width: 100%;}
 		#spectrum {
-			display: grid;
-			grid-area: spectrum;
-			text-align: center;}		
+			display: flex;
+			justify-content: center;
+			text-align: center;
+			width: 100%;}		
 		
 		#ELD_canvas{background-color: white;
 			    color: white;
 			    border: 10px;}
-		#spectrum_canvas{background-color: White;}
+		#spectrum_canvas{background-color: White;
+                        margin: 10px;
+        }
 
+        .const_button{
+            margin: 10px 0px;
+        }
 
 		input[type=number] {
 			text-align: center; 
 			float:left;
-			width: 35px
+			width: 35px;
 			-moz-appearance: textfield;}
 		
 		button {text-align: center;
@@ -115,53 +124,55 @@
 	</div>
 	<hr>
 	<section id = "main">
-		<div id = "energy_level_diagram">
-			<canvas id="ELD_canvas" height=550px width=550px style="background-color: white"> </canvas>
-			<button id="draw_diagram_b" onclick="draw_diagram()" style="width:225px; margin: 2%;" disabled>
-				Draw energy level diagram.</button>
-			<button id="clear_diagram_b" onclick="clear_canvas()" style="width:300px; margin: 2%;" disabled>
-				Clear energy level diagram and spectrum.</button>
-			<br>
-		</div>
-		<div id="constants">
-			<div style="border: 0; padding: 0; margin: 0;">
-			<label for="temp">T for experiment (K): </label>
-			<input type="number" id="temp" placeholder=0 onwheel="this.blur()" style="width: 30px" />
+		<div id="main_row_1">
+			<div id = "energy_level_diagram">
+				<canvas id="ELD_canvas" height=550px width=550px style="background-color: white"> </canvas>
+				<button id="draw_diagram_b" onclick="draw_diagram()" style="width:225px; margin: 2%;" disabled>
+					Draw energy level diagram.</button>
+				<button id="clear_diagram_b" onclick="clear_canvas()" style="width:300px; margin: 2%;" disabled>
+					Clear energy level diagram and spectrum.</button>
+				<br>
 			</div>
-			<div style="border: 0; padding: 0; margin: 0; height: 5px"><hr></div>
-			<div style="border: 0; padding: 0; margin: 0;">
-			<label for="mass_1">Mass of atom 1 (amu): </label>
-			<input type="number" id="mass_1" placeholder=0 onwheel="this.blur()" style="width: 30px" />
-		
-			<label>Mass of atom 2 (amu): </label>
-			<input type="number" id="mass_2" placeholder=0 onwheel="this.blur()" style="width: 30px" >
+			<div id="constants">
+				<div style="border: 0; padding: 0; margin: 0;">
+				<label for="temp">T for experiment (K): </label>
+				<input type="number" id="temp" placeholder=0 onwheel="this.blur()" style="width: 30px" />
+				</div>
+				<div style="border: 0; padding: 0; margin: 0; height: 5px"><hr></div><br>
+				<div style="border: 0; padding: 0; margin: 0;">
+				<label for="mass_1">Mass of atom 1 (amu): </label>
+				<input type="number" id="mass_1" placeholder=0 onwheel="this.blur()" style="width: 30px" />
+			
+				<label>Mass of atom 2 (amu): </label>
+				<input type="number" id="mass_2" placeholder=0 onwheel="this.blur()" style="width: 30px" >
 
-			<button id="red_mass_b" onclick="calc_red_mass()">    Reduced mass.    </button>
-			<input type="number" id="red_mass" placeholder=0 onwheel="this.blur()" style="width: 175px" >
-			<label style="width: 30px"> kg.</label>
-			</div>
-			<div style="border: 0; padding: 0; margin: 0; height: 5px"><hr></div>
-			<div style="border: 0; padding: 0; margin: 0;">
-			<label>Spring Constant (kg s<sup>-2</sup>): </label>
-			<input type="number" id="spring_const" placeholder=0 onwheel="this.blur()" style="width: 30px" >
-			<button id="freq_b" onclick="calc_freq()" disabled>    Calculate frequency.    </button>
-			<br><input type="number" id="freq" placeholder=0 onwheel="this.blur()" style="width: 175px" > 
-			<label style = "padding-right: 0px;">cm<sup>-1</sup>.</label>
-			</div>
-			<div style="border: 0; padding: 0; margin: 0; height: 5px"><hr></div>
-			<div style="border: 0; padding: 0; margin: 0;">
-			<label>Bond length (&angst;): </label>
-			<input type="number" id="bond_length" placeholder=0 onwheel="this.blur()" style="width: 30px" >
-			<br><button id="rot_b" onclick="calc_B()" disabled style="width:200px">Calculate Rotational Constant.</button>
-			<br><input type="number" id="B" placeholder=0 onwheel="this.blur()" style="width: 175px" > 
-			<label style = "padding-right: 0px;">cm<sup>-1</sup>.</label>
-			</div>
-			<div style="border: 0; padding: 0; margin: 0; height: 5px"><hr></div>
-			<div style="border: 0; padding: 0; margin: 0;">
-			Alternately, enter the frequency and/or rotational constant (in the correct units) and convert to 
-			spring constant or bond length. Both require the masses to be input.
-			<button id="k_b" onclick="calc_k()" disabled>Calculate Spring Constant.</button>
-			<button id="r_b" onclick="calc_r()" disabled>Calculate Bond Length.</button>
+				<button id="red_mass_b" class="const_button" onclick="calc_red_mass()">    Reduced mass.    </button>
+				<input type="number" id="red_mass" placeholder=0 onwheel="this.blur()" style="width: 175px" >
+				<label style="width: 30px"> kg.</label>
+				</div>
+				<div style="border: 0; padding: 0; margin: 0; height: 5px"><hr></div><br>
+				<div style="border: 0; padding: 0; margin: 0;">
+				<label>Spring Constant (kg s<sup>-2</sup>): </label>
+				<input type="number" id="spring_const" placeholder=0 onwheel="this.blur()" style="width: 30px" >
+				<button id="freq_b" class="const_button" onclick="calc_freq()" disabled>    Calculate frequency.    </button>
+				<br><input type="number" id="freq" placeholder=0 onwheel="this.blur()" style="width: 175px" > 
+				<label style = "padding-right: 0px;">cm<sup>-1</sup>.</label>
+				</div>
+				<div style="border: 0; padding: 0; margin: 0; height: 5px"><hr></div><br>
+				<div style="border: 0; padding: 0; margin: 0;">
+				<label>Bond length (&angst;): </label>
+				<input type="number" id="bond_length" placeholder=0 onwheel="this.blur()" style="width: 30px" >
+				<br><button id="rot_b" class="const_button" onclick="calc_B()" disabled style="width:200px">Calculate Rotational Constant.</button>
+				<br><input type="number" id="B" placeholder=0 onwheel="this.blur()" style="width: 175px" > 
+				<label style = "padding-right: 0px;">cm<sup>-1</sup>.</label>
+				</div>
+				<div style="border: 0; padding: 0; margin: 0; height: 5px"><hr></div><br>
+				<div style="border: 0; padding: 0; margin: 0;">
+				Alternately, enter the frequency and/or rotational constant (in the correct units) and convert to 
+				spring constant or bond length. Both require the masses to be input.
+				<button id="k_b" class="const_button" onclick="calc_k()" disabled>Calculate Spring Constant.</button>
+				<button id="r_b" class="const_button" onclick="calc_r()" disabled>Calculate Bond Length.</button>
+				</div>
 			</div>
 		</div>
 		<div id="line_buttons">
@@ -183,7 +194,7 @@
 			</div>
 		</div>
 		<div id = "spectrum">
-			<canvas id="spectrum_canvas" height=450px width=750px style="background-color: white"> </canvas
+			<canvas id="spectrum_canvas" height=450px width=750px style="background-color: white"> </canvas>
 		</div>
 	</section>
 	<p style = 'width: 800px'>This is the work of Dr. Mauricio Cafiero and may be used widely though attribution is appreciated.</p>
@@ -564,3 +575,4 @@ function calc_r(){
 </script>
 
 </html>
+
